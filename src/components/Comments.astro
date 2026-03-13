@@ -3,11 +3,11 @@ import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/LastUpdated.astro';
 ---
 
-{/* 1. 원래 나오던 업데이트 날짜 표시 */}
+{/* 1. 원래 나오던 업데이트 날짜 */}
 <Default {...Astro.props} />
 
-{/* 2. 그 바로 아래에 댓글창 표시 */}
-<div class="giscus-wrapper" style="margin-top: 3rem;">
+{/* 2. 게시글 본문 폭에 맞춘 댓글창 */}
+<div class="giscus-container">
   <script src="https://giscus.app/client.js"
           data-repo="lukyday007/lukyday_blog"
           data-repo-id="R_kgDORmJz6A"
@@ -24,3 +24,16 @@ import Default from '@astrojs/starlight/components/LastUpdated.astro';
           async>
   </script>
 </div>
+
+<style>
+  .giscus-container {
+    margin-top: 3rem;
+    /* Starlight 본문 너비 제약을 따르도록 설정 */
+    width: 100%;
+  }
+
+  /* Giscus 내부 프레임이 컨테이너 밖으로 나가지 않게 고정 */
+  .giscus-container :global(iframe) {
+    width: 100% !important;
+  }
+</style>
