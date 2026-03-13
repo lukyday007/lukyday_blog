@@ -2,25 +2,27 @@
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/LastUpdated.astro';
 
-// Starlight에서 현재 언어를 가져옵니다.
-const { locale } = Astro.props;
-const giscusLang = locale === 'en' ? 'en' : 'ko';
+// 1. URL 경로를 가져와서 /en/ 이 포함되어 있는지 직접 확인합니다.
+const url = Astro.url.pathname;
+const isEnglish = url.includes('/en/');
+const giscusLang = isEnglish ? 'en' : 'ko';
 ---
 
 <Default {...Astro.props} />
 
 <div class="giscus-container">
-  {/* 자바스크립트가 실행되어 script 태그를 생성할 자리 */}
   <div id="giscus-slot"></div>
 </div>
 
 <script is:inline define:vars={{ giscusLang }}>
-  // 1. 기존에 있던 giscus 스크립트나 프레임이 있다면 청소합니다.
-  const slot = document.getElementById('giscus-slot');
-  if (slot) {
+  // 함수로 만들어서 페이지가 바뀔 때마다 실행되게 합니다.
+  function loadGiscus() {
+    const slot = document.getElementById('giscus-slot');
+    if (!slot) return;
+    
+    // 이미 생성된 스크립트가 있다면 중복 실행 방지를 위해 비웁니다.
     slot.innerHTML = '';
     
-    // 2. 새로운 script 태그를 수동으로 만듭니다.
     const script = document.createElement('script');
     script.src = "https://giscus.app/client.js";
     script.dataset.repo = "lukyday007/lukyday_blog";
@@ -33,13 +35,18 @@ const giscusLang = locale === 'en' ? 'en' : 'ko';
     script.dataset.emitMetadata = "0";
     script.dataset.inputPosition = "bottom";
     script.dataset.theme = "preferred_color_scheme";
-    // 3. 여기서 강제로 언어를 박아버립니다!
-    script.dataset.lang = giscusLang; 
+    script.dataset.lang = giscusLang; // 여기서 주소창 기준으로 판정된 언어 주입!
     script.crossOrigin = "anonymous";
     script.async = true;
 
     slot.appendChild(script);
   }
+
+  // 처음 로드될 때 실행
+  loadGiscus();
+
+  // Starlight(Astro) 페이지 전환 시 다시 실행 (이게 핵심!)
+  document.addEventListener('astro:after-swap', loadGiscus);
 </script>
 
 <style>
