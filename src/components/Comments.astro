@@ -2,18 +2,12 @@
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/LastUpdated.astro';
 
-// 1. 현재 페이지의 언어 설정(ko, en 등)을 Starlight props에서 가져옵니다.
 const { locale } = Astro.props;
-
-// 2. Giscus가 인식하는 언어 코드로 변환 (Starlight의 root는 보통 'ko'나 'en'으로 매핑됨)
-// 만약 root locale이 설정되어 있다면 기본값으로 'ko'를 사용하도록 설정합니다.
 const giscusLang = locale === 'en' ? 'en' : 'ko';
 ---
 
-{/* 원래 나오던 업데이트 날짜 */}
 <Default {...Astro.props} />
 
-{/* 게시글 본문 폭에 맞춘 댓글창 */}
 <div class="giscus-container">
   <script src="https://giscus.app/client.js"
           data-repo="lukyday007/lukyday_blog"
@@ -26,8 +20,7 @@ const giscusLang = locale === 'en' ? 'en' : 'ko';
           data-emit-metadata="0"
           data-input-position="bottom"
           data-theme="preferred_color_scheme"
-          {/* 3. 여기서 변수 giscusLang을 사용해 언어를 동적으로 바꿉니다! */}
-          data-lang={giscusLang}
+          data-lang={giscusLang} 
           crossorigin="anonymous"
           async>
   </script>
@@ -38,8 +31,21 @@ const giscusLang = locale === 'en' ? 'en' : 'ko';
     margin-top: 3rem;
     width: 100%;
   }
-
   .giscus-container :global(iframe) {
     width: 100% !important;
   }
 </style>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+    
+    // 현재 URL에서 언어 감지
+    const lang = location.pathname.startsWith('/en/') ? 'en' : 'ko';
+    
+    iframe.contentWindow.postMessage({
+      giscus: { setConfig: { lang: lang } }
+    }, 'https://giscus.app');
+  });
+</script>
