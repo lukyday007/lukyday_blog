@@ -2,6 +2,7 @@
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/LastUpdated.astro';
 
+// Starlight에서 현재 언어를 가져옵니다.
 const { locale } = Astro.props;
 const giscusLang = locale === 'en' ? 'en' : 'ko';
 ---
@@ -9,43 +10,41 @@ const giscusLang = locale === 'en' ? 'en' : 'ko';
 <Default {...Astro.props} />
 
 <div class="giscus-container">
-  <script src="https://giscus.app/client.js"
-          data-repo="lukyday007/lukyday_blog"
-          data-repo-id="R_kgDORmJz6A"
-          data-category="Announcements"
-          data-category-id="DIC_kwDORmJz6M4C4Uat"
-          data-mapping="pathname"
-          data-strict="0"
-          data-reactions-enabled="1"
-          data-emit-metadata="0"
-          data-input-position="bottom"
-          data-theme="preferred_color_scheme"
-          data-lang={giscusLang} 
-          crossorigin="anonymous"
-          async>
-  </script>
+  {/* 자바스크립트가 실행되어 script 태그를 생성할 자리 */}
+  <div id="giscus-slot"></div>
 </div>
+
+<script is:inline define:vars={{ giscusLang }}>
+  // 1. 기존에 있던 giscus 스크립트나 프레임이 있다면 청소합니다.
+  const slot = document.getElementById('giscus-slot');
+  if (slot) {
+    slot.innerHTML = '';
+    
+    // 2. 새로운 script 태그를 수동으로 만듭니다.
+    const script = document.createElement('script');
+    script.src = "https://giscus.app/client.js";
+    script.dataset.repo = "lukyday007/lukyday_blog";
+    script.dataset.repoId = "R_kgDORmJz6A";
+    script.dataset.category = "Announcements";
+    script.dataset.categoryId = "DIC_kwDORmJz6M4C4Uat";
+    script.dataset.mapping = "pathname";
+    script.dataset.strict = "0";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "bottom";
+    script.dataset.theme = "preferred_color_scheme";
+    // 3. 여기서 강제로 언어를 박아버립니다!
+    script.dataset.lang = giscusLang; 
+    script.crossOrigin = "anonymous";
+    script.async = true;
+
+    slot.appendChild(script);
+  }
+</script>
 
 <style>
   .giscus-container {
     margin-top: 3rem;
     width: 100%;
   }
-  .giscus-container :global(iframe) {
-    width: 100% !important;
-  }
 </style>
-
-<script is:inline>
-  document.addEventListener('astro:page-load', () => {
-    const iframe = document.querySelector('iframe.giscus-frame');
-    if (!iframe) return;
-    
-    // 현재 URL에서 언어 감지
-    const lang = location.pathname.startsWith('/en/') ? 'en' : 'ko';
-    
-    iframe.contentWindow.postMessage({
-      giscus: { setConfig: { lang: lang } }
-    }, 'https://giscus.app');
-  });
-</script>
