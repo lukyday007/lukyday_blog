@@ -18,12 +18,14 @@ hero:
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import greetingImg from '../../assets/greeting.png';
 
 <div style="display: flex; justify-content: center; align-items: center; margin: 3rem 0;">
-  <img 
-    src="/src/assets/greeting.png" 
+  <Image 
+    src={greetingImg} 
     alt="Greeting Image" 
-    style="width: 100%; max-width: 600px; border-radius: 1rem; shadow: var(--sl-shadow-md); border: 1px solid var(--sl-color-hairline);" 
+    width="600"
+    style="border-radius: 1rem; box-shadow: var(--sl-shadow-md); border: 1px solid var(--sl-color-hairline); height: auto;" 
   />
 </div>
 
