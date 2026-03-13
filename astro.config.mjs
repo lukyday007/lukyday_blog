@@ -1,24 +1,36 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// https://astro.build/config
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'My Docs',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			title: "Dayul's Tech Blog",
+			defaultLocale: 'root', // 여기가 root이면 아래 locales에도 root가 있어야 함!
+			locales: {
+				root: {
+					label: '한국어',
+					lang: 'ko',
+				},
+				en: {
+					label: 'English',
+					lang: 'en',
+				},
+			},
+			social: [
+				{
+					icon: 'github',
+					label: 'GitHub',
+					href: 'https://github.com/lukyday007',
+				},
+			],
 			sidebar: [
 				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
-					],
+					label: 'High-Scale',
+					autogenerate: { directory: 'high-scale' },
 				},
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: 'CS Basics',
+					autogenerate: { directory: 'cs-basics' },
 				},
 			],
 		}),

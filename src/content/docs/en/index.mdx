@@ -1,0 +1,64 @@
+---
+title: Dayul's Tech Blog
+description: From CS fundamentals to high-scale traffic handling strategies.
+keywords: [High-Scale, Concurrency, Redis, Kafka, Architecture]
+# template: splash
+hero:
+  tagline: "Exploring High-Scale Systems!"
+  image:
+    file: ../../../assets/houston.webp
+  actions:
+    - text: Learn High-Scale
+      link: /en/high-scale/draft/
+      icon: right-arrow
+    - text: Visit GitHub
+      link: https://github.com/lukyday007
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<div style="display: flex; justify-content: center; align-items: center; margin: 3rem 0;">
+  <img 
+    src="/src/assets/greeting.png" 
+    alt="Greeting Image" 
+    style="width: 100%; max-width: 600px; border-radius: 1rem; box-shadow: var(--sl-shadow-md); border: 1px solid var(--sl-color-hairline);" 
+  />
+</div>
+
+## 🚀 Shortcuts
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+
+  {/* 1. High-Scale Traffic Handling */}
+  <a href="/en/high-scale/index/" style="text-decoration: none; color: inherit;">
+    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
+      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">High-Scale Traffic</h3>
+      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">Covers **High-Scale** system design strategies considering concurrency, consistency, and availability.</p>
+    </div>
+  </a>
+
+  {/* 2. CS Basics */}
+  <a href="/en/cs-basics/index/" style="text-decoration: none; color: inherit;">
+    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
+      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">CS Basics</h3>
+      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">Summarizes **fundamentals** for engineers, including Network, OS, and Database.</p>
+    </div>
+  </a>
+
+  {/* 3. Multilingual Support */}
+  <a href="/" style="text-decoration: none; color: inherit;">
+    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
+      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">Multilingual</h3>
+      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">Sharing knowledge not only in Korean but also in **English**.</p>
+    </div>
+  </a>
+
+  {/* 4. Practical Tech */}
+  <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%;">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">Practical Tech</h3>
+    <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">Discusses technologies applied in **real projects** like Java, Spring, and Kafka.</p>
+  </div>
+
+</div>
