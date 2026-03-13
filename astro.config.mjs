@@ -5,7 +5,10 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Dayul's Tech Blog",
-			defaultLocale: 'root', // 여기가 root이면 아래 locales에도 root가 있어야 함!
+			defaultLocale: 'root', 
+			components: {
+				LastUpdated: './src/components/Comments.astro', 
+			},
 			locales: {
 				root: {
 					label: '한국어',
