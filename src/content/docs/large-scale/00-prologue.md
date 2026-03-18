@@ -1,5 +1,5 @@
 ---
-title: 대용량 처리(Large-scale Processing)란 무엇인가?? — 프롤로그
+title: 프롤로그 - 대용량 처리(Large-scale Processing)란 무엇인가?? 
 description: 대용량 처리의 본질과 경영학의 제약이론(TOC)을 결합한 엔지니어링 관점의 정의
 sidebar:
   order: 1
@@ -14,7 +14,7 @@ sidebar:
 ### 1. 대용량 시스템을 정의하는 3가지 축과 핵심 지표
 대용량 트래픽의 규모를 파악하고 시스템의 처리 능력을 객관적으로 평가하기 위해 지표들을 3가지 차원으로 분류하여 관리한다.
 
-<div style="text-align: right; margin-top: -1.5rem;">  
+<div style="text-align: right; margin-top: -1.0rem;">  
     <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE: Monitoring Distributed Systems</a>
 </div>
 
@@ -39,7 +39,7 @@ sidebar:
 
 엘리야후 골드랫(Eliyahu M. Goldratt)이 제시한 경영 관리 패러다임이다. "시스템의 전체 산출물은 가장 취약한 사슬, 즉 <strong>제약 요인(Constraint)</strong>에 의해 결정된다"는 것이 핵심이다.
 
-<div style="text-align: right; margin-top: -1.5rem;">
+<div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.lean.org/lexicon-terms/theory-of-constraints/">Lean Enterprise Institute: TOC</a>
 </div>
 
@@ -60,7 +60,7 @@ sidebar:
 * **병목은 사라지지 않는다:** TPS를 높여 트래픽 문제를 해결하면 네트워크 Throughput이 병목이 되고, 이를 해결하면 로직의 Complexity로 인한 Latency가 발목을 잡는다. 대용량 처리는 병목을 완전히 없애는 것이 아니라, 이를 더 넓은 대역폭을 가진 지점으로 전략적으로 이동시키는 과정이다.
 * **리소스의 효율적 배치:** TOC 관점에서 시스템을 바라보면, 무작정 서버 인스턴스를 늘리는 대신 '가장 약한 고리'를 찾아 자원을 집중 투입하는 최적의 의사결정이 가능해진다.
 
-<div style="text-align: right; margin-top: -1.0rem;">
+<div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html">AWS Well-Architected Framework</a>
 </div>
 
