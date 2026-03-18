@@ -2,7 +2,9 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+	site: 'https://lukyday-blog.vercel.app',
 	integrations: [
+		sitemap(),
 		starlight({
 			title: "Dayul's Tech Blog",
 			head: [
