@@ -5,6 +5,15 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Dayul's Tech Blog",
+			head: [
+				{
+					tag: 'meta',
+					attrs: {
+						name: 'google-site-verification',
+						content: "UFnUU60lojUILDpWoAoFgwIYh-DxlhHk5NLRvuoL3Jw",
+					},
+				},
+			],
 			defaultLocale: 'root', 
 			components: {
 				LastUpdated: './src/components/Comments.astro', 
