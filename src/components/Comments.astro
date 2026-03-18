@@ -1,6 +1,7 @@
 ---
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/LastUpdated.astro';
+import Footer from './Footer.astro'; 
 
 // 1. URL 경로를 가져와서 /en/ 이 포함되어 있는지 직접 확인합니다.
 const url = Astro.url.pathname;
@@ -55,3 +56,4 @@ const giscusLang = isEnglish ? 'en' : 'ko';
     width: 100%;
   }
 </style>
+<Footer />
