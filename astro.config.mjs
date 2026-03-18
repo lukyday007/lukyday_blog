@@ -8,6 +8,7 @@ export default defineConfig({
 		sitemap(),
 		starlight({
 			title: "Dayul's Tech Blog",
+			favicon: '/owl.png',
 			head: [
 				{
 					tag: 'meta',
