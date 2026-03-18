@@ -5,6 +5,11 @@ sidebar:
   order: 1
 ---
 
+> 3 AM, October 2025. A single DNS configuration error on an AWS server brought Snapchat, Roblox, and McDonald's to a standstill. 3,500 companies across 60 countries were caught in the wake of this minor crack. 
+> 
+> Systems are far more fragile than we imagine. Large-scale processing is not just a technical trend for performance. It is the core of engineering—a strategic battle for survival at the edge of resource thresholds.
+
+
 <br>
 
 Large-scale processing is a domain of engineering that transcends the simple notion of "having many users." It refers to the technical strategies employed to ensure service availability and performance without degradation, even when a system reaches the thresholds of its available resources (CPU, Memory, Network Bandwidth).
