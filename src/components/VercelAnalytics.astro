@@ -1,3 +1,4 @@
-import Analytics from '@vercel/analytics/astro';
-
-<Analytics />
+<script>
+  import { inject } from '@vercel/analytics';
+  inject();
+</script>
