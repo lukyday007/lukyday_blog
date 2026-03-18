@@ -1,71 +1,88 @@
 ---
 title: Prologue - What is Large-scale Processing?
-description: A definition of large-scale processing from an engineering perspective, integrating the Theory of Constraints (TOC) from business administration.
+description: A definition of large-scale processing from an engineering perspective, integrating the Four Golden Signals (SRE) and the Theory of Constraints (TOC).
 sidebar:
   order: 1
 ---
 
 <br>
 
-Large-scale processing is a realm of engineering that transcends the simple notion of "having many users." It refers to the technical strategies employed to ensure service availability and performance without degradation, even when a system reaches the thresholds of its available resources (CPU, Memory, Network Bandwidth).
+Large-scale processing is a domain of engineering that transcends the simple notion of "having many users." It refers to the technical strategies employed to ensure service availability and performance without degradation, even when a system reaches the thresholds of its available resources (CPU, Memory, Network Bandwidth).
 
 <br>
 
-### 1. The 3 Axes of Large-scale Systems and Key Metrics
-To grasp the scale of high-volume traffic and objectively evaluate a system's processing capacity, we categorize and manage metrics across three dimensions.
+### 1. The Four Golden Signals of System Health
+
+The Google SRE team identifies four critical signals that must be measured to evaluate a system's health. We use these signals to detect bottlenecks and determine system limits.
 
 <div style="text-align: right; margin-top: -1.0rem;">  
     <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE: Monitoring Distributed Systems</a>
 </div>
 
-<br>
+* **Latency:** The time it takes to service a request. It is vital to track the difference in speed between successful and failed requests to detect anomalies.
+* **Traffic:** A measure of how much demand is being placed on the system, such as HTTP requests per second (RPS).
+* **Errors:** The rate of requests that fail, whether explicitly (e.g., 500 errors) or implicitly (e.g., incorrect content).
+* **Saturation:** A measure of how "full" your service is. This is the most direct indicator of large-scale processing challenges, as latency increases are often a leading indicator of saturation.
 
-**Traffic (Frequency of Requests and Capacity)**
-Measures how many requests enter the system per unit of time and how many simultaneous connections can be maintained.
-* **TPS / QPS:** Transactions or Queries Per Second. Represents the system's productivity.
-* **Concurrency:** The number of simultaneous connections. Determines the system's capacity during peak events like flash sales or ticket reservations.
 
-**Volume (Size and Flow of Data)**
-Refers to the physical size of the data the system must handle and its transmission capability.
-* **Throughput:** The amount of data transmitted per unit of time (MB/s). A critical factor in determining bottlenecks in large file transfers or media streaming environments.
-
-**Complexity (Difficulty of Processing and User Experience)**
-The amount of computation required to handle a single request and the level of interaction between system components.
-* **Latency:** The delay between a request and its response. As internal processing logic becomes more complex, latency increases, directly impacting User Experience (UX).
 
 <br>
 
-### 2. Business Perspective: Theory of Constraints (TOC)
+### 2. Defining Large-scale Systems: The Three Axes and Metrics
 
-The Theory of Constraints is a management paradigm introduced by Eliyahu M. Goldratt. Its core premise is that "the total output of any system is determined by its weakest link—the <strong>Constraint</strong>."
+While the Golden Signals show the 'state' of a system, an engineer must define and manage the 'nature' of the load through specific metrics across three axes.
 
-<div style="text-align: right; margin-top: -0.5rem;">
+**Traffic (Frequency and Capacity)**
+Measures how many requests enter per unit of time and how many connections can be maintained.
+* **TPS / QPS:** Transactions or Queries Per Second. Represents the actual productivity of the system.
+* **Concurrency:** The number of simultaneous connections. A key factor in determining capacity during events like flash sales or ticket reservations.
+
+**Volume (Size and Flow)**
+Refers to the physical size of the data and the transmission capability required.
+* **Throughput:** Data size transmitted per unit of time (MB/s). This often becomes the bottleneck in large file transfers or media streaming.
+
+**Complexity (Processing Difficulty)**
+The amount of computation required for a single request and the level of interaction between system components.
+* **Logic Latency:** As logic becomes more complex, processing time increases, leading to a rapid rise in **Saturation**.
+
+<br>
+
+### 3. Business Perspective: Theory of Constraints (TOC)
+
+The Theory of Constraints, introduced by Eliyahu M. Goldratt, posits that "the total output of any system is determined by its weakest link—the <strong>Constraint</strong>."
+
+<div style="text-align: right; margin-top: -1.0rem;">
   <a href="https://www.lean.org/lexicon-terms/theory-of-constraints/">Lean Enterprise Institute: TOC</a>
 </div>
 
-<br>
-
-**Core Principles of TOC**
-
-* **The Existence of a Bottleneck:** In every complex system, there is always exactly one bottleneck that limits the flow.
-* **Global Optimization:** Improving the performance of a non-bottleneck component will not increase the overall system output. 
-* **The Shift of the Bottleneck:** Once one bottleneck is resolved, another point in the system becomes the new bottleneck.
+In engineering, the point where **Saturation** approaches 100% is what TOC defines as a **Bottleneck**. The essence of large-scale processing is identifying which saturation point spikes first as traffic grows and resolving that constraint with the right strategy.
 
 <br>
 
-### 3. Bottleneck Management from an Engineering Perspective
+### 4. Engineering Strategy: Scalability
 
-In a large-scale processing environment, the engineer's role is to accurately identify resource thresholds and manage bottlenecks. This begins by using metrics to pinpoint which of the three axes (Traffic, Volume, Complexity) is currently acting as the constraint.
+To resolve the bottlenecks identified through TOC, we employ scalability strategies to increase system capacity.
 
-* **Bottlenecks Never Disappear:** Resolving a CPU bottleneck might lead to a network throughput bottleneck, which in turn might reveal latency issues caused by logic complexity. Large-scale processing is not about eliminating bottlenecks entirely, but about **strategically moving** them to points with higher bandwidth or capacity.
-* **Strategic Resource Allocation:** Viewing a system through the lens of TOC allows for optimal decision-making—focusing resources on the "weakest link" rather than blindly scaling up server instances.
+<div style="text-align: right; margin-top: -1.0rem;">
+  <a href="https://www.geeksforgeeks.org/overview-of-scaling-vertical-and-horizontal-scaling/">GeeksforGeeks: Vertical and Horizontal Scaling</a>
+</div>
 
-<div style="text-align: right; margin-top: -0.5rem;">
+* **Vertical Scaling (Scale-up):** Increasing the specifications (CPU, RAM, etc.) of a single node to lower its saturation.
+* **Horizontal Scaling (Scale-out):** Increasing the number of nodes to distribute the load and increase the total **Throughput** of the system.
+
+
+
+[Image of horizontal vs vertical scaling]
+
+
+<br>
+
+### 5. Conclusion
+
+Ultimately, large-scale processing is <strong>Strategic Bottleneck Management</strong>—the process of managing **Saturation** to control **Latency** and **Errors**.
+
+<div style="text-align: right; margin-top: -1.0rem;">
   <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html">AWS Well-Architected Framework</a>
 </div>
 
-<br>
-
-### 4. Conclusion
-
-Ultimately, large-scale processing is <strong>Strategic Bottleneck Management</strong>. Throughout this series, we will explore the constraints that arise at each stage—from the network layer to application architecture—and discuss specific strategies to resolve them.
+Throughout this series, we will examine the constraints occurring at each stage—from the network layer to application architecture—and discuss how to verify and resolve them using these metrics.
