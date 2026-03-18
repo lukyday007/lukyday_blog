@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import Default from '@astrojs/starlight/components/Head.astro';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 
@@ -28,7 +29,6 @@ export default defineConfig({
 			defaultLocale: 'root', 
 			components: {
 				LastUpdated: './src/components/Comments.astro', 
-				Head: './src/components/VercelAnalytics.astro',
 			},
 			locales: {
 				root: {
