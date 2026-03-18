@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import Default from '@astrojs/starlight/components/Head.astro';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 
