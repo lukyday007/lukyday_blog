@@ -48,8 +48,8 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: 'High-Scale',
-					autogenerate: { directory: 'high-scale' },
+					label: 'Large-Scale',
+					autogenerate: { directory: 'large-scale' },
 				},
 				{
 					label: 'CS Basics',
