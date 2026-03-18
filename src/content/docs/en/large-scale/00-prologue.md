@@ -76,9 +76,18 @@ To resolve the bottlenecks identified through TOC, we employ scalability strateg
 * **Horizontal Scaling (Scale-out):** Increasing the number of nodes to distribute the load and increase the total **Throughput** of the system.
 
 
-
-[Image of horizontal vs vertical scaling]
-
+```
+  [Single Server]         [Multiple Servers]
+                                        
+  ┌─────────────┐         ┌───┐ ┌───┐ ┌───┐
+  │   CPU ↑↑↑   │         │ S │ │ S │ │ S │
+  │   RAM ↑↑↑   │   →     │ 1 │ │ 2 │ │ 3 │
+  │   SSD ↑↑↑   │         └───┘ └───┘ └───┘
+  └─────────────┘            Load Balancer
+  
+  Scale-up                   Scale-out
+  (Has limits)              (Infinitely expandable)
+```
 
 <br>
 
