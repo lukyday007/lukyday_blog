@@ -8,11 +8,17 @@ const isEnglish = url.includes('/en/');
     <>
       <p>© 2025 Dayul · <a href="https://lukyday-blog.vercel.app">lukyday-blog.vercel.app</a></p>
       <p>Please credit the source when sharing this post. Unauthorized reproduction is prohibited.</p>
+      <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">
+        <img src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png" alt="CC BY-NC-ND 4.0" />
+      </a>
     </>
   ) : (
     <>
-      <p>© 2026 Dayul · <a href="https://lukyday-blog.vercel.app">lukyday-blog.vercel.app</a></p>
+      <p>© 2025 Dayul · <a href="https://lukyday-blog.vercel.app">lukyday-blog.vercel.app</a></p>
       <p>이 글을 퍼가실 경우 반드시 출처를 표기해주세요. 무단 전재 및 재배포를 금지합니다.</p>
+      <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">
+        <img src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png" alt="CC BY-NC-ND 4.0" />
+      </a>
     </>
   )}
 </footer>
@@ -27,5 +33,9 @@ const isEnglish = url.includes('/en/');
   }
   .blog-footer a {
     color: var(--sl-color-gray-3);
+  }
+  .blog-footer img {
+    margin-top: 0.5rem;
+    display: block;
   }
 </style>
