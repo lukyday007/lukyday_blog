@@ -15,7 +15,7 @@ Large-scale processing is a domain of engineering that transcends the simple not
 
 The Google SRE team identifies four critical signals that must be measured to evaluate a system's health. We use these signals to detect bottlenecks and determine system limits.
 
-<div style="text-align: right; margin-top: -1.0rem;">  
+<div style="text-align: right; margin-top: -0.5rem;">  
     <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE: Monitoring Distributed Systems</a>
 </div>
 
@@ -51,7 +51,7 @@ The amount of computation required for a single request and the level of interac
 
 The Theory of Constraints, introduced by Eliyahu M. Goldratt, posits that "the total output of any system is determined by its weakest link—the <strong>Constraint</strong>."
 
-<div style="text-align: right; margin-top: -1.0rem;">
+<div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.lean.org/lexicon-terms/theory-of-constraints/">Lean Enterprise Institute: TOC</a>
 </div>
 
@@ -63,7 +63,7 @@ In engineering, the point where **Saturation** approaches 100% is what TOC defin
 
 To resolve the bottlenecks identified through TOC, we employ scalability strategies to increase system capacity.
 
-<div style="text-align: right; margin-top: -1.0rem;">
+<div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.geeksforgeeks.org/overview-of-scaling-vertical-and-horizontal-scaling/">GeeksforGeeks: Vertical and Horizontal Scaling</a>
 </div>
 
@@ -81,7 +81,7 @@ To resolve the bottlenecks identified through TOC, we employ scalability strateg
 
 Ultimately, large-scale processing is <strong>Strategic Bottleneck Management</strong>—the process of managing **Saturation** to control **Latency** and **Errors**.
 
-<div style="text-align: right; margin-top: -1.0rem;">
+<div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html">AWS Well-Architected Framework</a>
 </div>
 
