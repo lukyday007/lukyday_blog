@@ -1,15 +1,14 @@
 ---
 const url = Astro.url.pathname;
 const isEnglish = url.includes('/en/');
-// 현재 연도를 동적으로 가져옵니다.
-const currentYear = new Date().getFullYear(); 
+const currentYear = new Date().getFullYear();
 ---
 
 <footer class="blog-footer">
   {isEnglish ? (
     <>
       <p>© {currentYear} Dayul · <a href="https://lukyday-blog.vercel.app">lukyday-blog.vercel.app</a></p>
-      <p>Please credit the source when sharing this post. Unauthorized reproduction is prohibited.</p>
+      <p>Knowledge sharing is always welcome! However, please ensure to credit the source when sharing this post. Commercial use or unauthorized reproduction is prohibited.</p>
       <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">
         <img src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png" alt="CC BY-NC-ND 4.0" />
       </a>
@@ -17,10 +16,33 @@ const currentYear = new Date().getFullYear();
   ) : (
     <>
       <p>© {currentYear} Dayul · <a href="https://lukyday-blog.vercel.app">lukyday-blog.vercel.app</a></p>
-      <p>이 글을 퍼가실 경우 반드시 출처를 표기해주세요. 무단 전재 및 재배포를 금지합니다.</p>
+      <p>지식 공유를 환영합니다! 다만, 본 포스팅의 내용을 공유하실 때는 반드시 출처를 밝혀주시기 바랍니다. 영리적 목적의 무단 전재 및 재배포는 금지하고 있습니다.</p>
       <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">
         <img src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png" alt="CC BY-NC-ND 4.0" />
       </a>
     </>
   )}
 </footer>
+
+<style>
+  .blog-footer {
+    margin-top: 4rem; /* 본문과 거리를 조금 더 두어 여유를 줬습니다 */
+    padding-top: 2rem;
+    border-top: 1px solid var(--sl-color-gray-5);
+    font-size: 0.85rem;
+    line-height: 1.6; /* 문구가 길어졌으므로 행간을 조절했습니다 */
+    color: var(--sl-color-gray-3);
+  }
+  .blog-footer a {
+    color: var(--sl-color-gray-3);
+    text-decoration: underline; /* 링크임을 더 명확히 표시 */
+  }
+  .blog-footer img {
+    margin-top: 1rem;
+    display: block;
+    opacity: 0.8; /* 저작권 아이콘이 너무 튀지 않게 조절 */
+  }
+  .blog-footer img:hover {
+    opacity: 1;
+  }
+</style>
