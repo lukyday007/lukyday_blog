@@ -16,6 +16,13 @@ export default defineConfig({
 						content: "UFnUU60lojUILDpWoAoFgwIYh-DxlhHk5NLRvuoL3Jw",
 					},
 				},
+				{
+					tag: 'script',
+					attrs: {
+						src: 'https://va.vercel-scripts.com/v1/script.debug.js',
+						defer: true,
+					},
+				},
 			],
 			defaultLocale: 'root', 
 			components: {
