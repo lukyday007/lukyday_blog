@@ -3,7 +3,6 @@ import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/LastUpdated.astro';
 import Footer from './Footer.astro'; 
 
-// 1. URL 경로를 가져와서 /en/ 이 포함되어 있는지 직접 확인합니다.
 const url = Astro.url.pathname;
 const isEnglish = url.includes('/en/');
 const giscusLang = isEnglish ? 'en' : 'ko';
@@ -16,12 +15,11 @@ const giscusLang = isEnglish ? 'en' : 'ko';
 </div>
 
 <script is:inline define:vars={{ giscusLang }}>
-  // 함수로 만들어서 페이지가 바뀔 때마다 실행되게 합니다.
+
   function loadGiscus() {
     const slot = document.getElementById('giscus-slot');
     if (!slot) return;
     
-    // 이미 생성된 스크립트가 있다면 중복 실행 방지를 위해 비웁니다.
     slot.innerHTML = '';
     
     const script = document.createElement('script');
@@ -36,19 +34,19 @@ const giscusLang = isEnglish ? 'en' : 'ko';
     script.dataset.emitMetadata = "0";
     script.dataset.inputPosition = "bottom";
     script.dataset.theme = "preferred_color_scheme";
-    script.dataset.lang = giscusLang; // 여기서 주소창 기준으로 판정된 언어 주입!
+    script.dataset.lang = giscusLang; 
     script.crossOrigin = "anonymous";
     script.async = true;
 
     slot.appendChild(script);
   }
 
-  // 처음 로드될 때 실행
   loadGiscus();
 
-  // Starlight(Astro) 페이지 전환 시 다시 실행 (이게 핵심!)
   document.addEventListener('astro:after-swap', loadGiscus);
 </script>
+
+<Footer />
 
 <style>
   .giscus-container {
@@ -56,4 +54,3 @@ const giscusLang = isEnglish ? 'en' : 'ko';
     width: 100%;
   }
 </style>
-<Footer />
