@@ -100,7 +100,9 @@ Once you've found the bottleneck, you need to increase capacity. There are two w
     (Has limits)        (Infinitely expandable)
 ```
 
-Neither is the right answer. There's only the right trade-off for the situation.
+Scale-up buys simplicity at the cost of a ceiling.  
+Scale-out removes the ceiling at the cost of complexity.  
+Neither is the right answer. There's only the right trade-off for the constraint you're solving.
 
 <br>
 
