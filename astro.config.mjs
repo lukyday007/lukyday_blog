@@ -28,7 +28,6 @@ export default defineConfig({
 			defaultLocale: 'root', 
 			components: {
 				LastUpdated: './src/components/Comments.astro', 
-				PageTitle: './src/components/PageTitle.astro',
 			},
 			locales: {
 				root: {

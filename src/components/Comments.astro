@@ -18,6 +18,8 @@ const formattedDate = publishedDate
 
 <Default {...Astro.props} />
 
+<p style="color: red;">{JSON.stringify(Object.keys(Astro.props))}</p>
+
 {formattedDate && (
   <p class="published-date">
     {isEnglish ? `Published: ${formattedDate}` : `작성일: ${formattedDate}`}
