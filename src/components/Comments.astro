@@ -6,9 +6,23 @@ import Footer from './Footer.astro';
 const url = Astro.url.pathname;
 const isEnglish = url.includes('/en/');
 const giscusLang = isEnglish ? 'en' : 'ko';
+
+const publishedDate = Astro.props.entry?.data?.date;
+const formattedDate = publishedDate 
+  ? new Date(publishedDate).toLocaleDateString(
+      isEnglish ? 'en-US' : 'ko-KR', 
+      { year: 'numeric', month: 'long', day: 'numeric' }
+    )
+  : null;
 ---
 
 <Default {...Astro.props} />
+
+{formattedDate && (
+  <p class="published-date">
+    {isEnglish ? `Published: ${formattedDate}` : `작성일: ${formattedDate}`}
+  </p>
+)}
 
 <Footer />
 
@@ -17,7 +31,6 @@ const giscusLang = isEnglish ? 'en' : 'ko';
 </div>
 
 <script is:inline define:vars={{ giscusLang }}>
-
   function loadGiscus() {
     const slot = document.getElementById('giscus-slot');
     if (!slot) return;
@@ -36,7 +49,7 @@ const giscusLang = isEnglish ? 'en' : 'ko';
     script.dataset.emitMetadata = "0";
     script.dataset.inputPosition = "bottom";
     script.dataset.theme = "preferred_color_scheme";
-    script.dataset.lang = giscusLang; 
+    script.dataset.lang = giscusLang;
     script.crossOrigin = "anonymous";
     script.async = true;
 
@@ -44,7 +57,6 @@ const giscusLang = isEnglish ? 'en' : 'ko';
   }
 
   loadGiscus();
-
   document.addEventListener('astro:after-swap', loadGiscus);
 </script>
 
@@ -52,5 +64,10 @@ const giscusLang = isEnglish ? 'en' : 'ko';
   .giscus-container {
     margin-top: 3rem;
     width: 100%;
+  }
+  .published-date {
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+    margin-top: 0.5rem;
   }
 </style>

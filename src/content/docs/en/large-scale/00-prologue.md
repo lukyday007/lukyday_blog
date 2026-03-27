@@ -3,7 +3,7 @@ title: Prologue - What is Large-scale Processing?
 description: A definition of large-scale processing from an engineering perspective, integrating the Four Golden Signals (SRE) and the Theory of Constraints (TOC).
 sidebar:
   order: 1
-lastUpdated: 2026-03-18
+date: 2026-03-18
 ---
 
 > 3 AM, October 2025. A single DNS configuration error on an AWS server brought Snapchat, Roblox, and McDonald's to a standstill. 3,500 companies across 60 countries were stopped cold by one small crack.
