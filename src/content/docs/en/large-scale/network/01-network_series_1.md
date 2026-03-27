@@ -22,6 +22,31 @@ The OSI model is not a taxonomy for networking textbooks. **It's a fault map —
 
 <br>
 
+### Why the Layers Don't Talk to Each Other
+
+Before the fault map makes sense, this question needs an answer. Why does the OSI model split into 7 layers at all? Wouldn't it be more efficient if each layer could see what the others were doing?
+
+In 1968, software engineer Melvin Conway proposed what has since become foundational in systems design:
+
+> *"Any organization that designs a system will produce a design whose structure is a copy of the organization's communication structure."* — Conway's Law
+
+The OSI model is that principle applied to network architecture. Each layer communicates only through a defined interface. Internal implementation stays private. Layer 4 has no idea whether Layer 7 is speaking HTTP or gRPC. Layer 3 doesn't know — or care — whether Layer 4 is TCP or UDP.
+
+This is **deliberate ignorance**. And that ignorance produces two trade-offs:
+
+* **Freedom to change:** Migrating from HTTP/1.1 to HTTP/2 happens entirely within Layer 7. Everything below stays untouched. The layers are decoupled by design.
+* **Fault isolation:** A routing failure at Layer 3 has no bearing on your application logic at Layer 7. The blast radius is contained to one layer.
+
+That's why the Cloudflare outage could be called "a Layer 3 problem" immediately. Without the layered design, the cause would have been buried somewhere in the full stack.
+
+**Each layer chose not to know the others. That's exactly what makes it possible to know which layer broke.**
+
+<div style="text-align: right; margin-top: -0.5rem;">
+  <a href="https://martinfowler.com/bliki/ConwaysLaw.html">Martin Fowler: Conway's Law</a>
+</div>
+
+<br>
+
 ### Every Layer Has Its Own Breaking Point
 
 Goldratt's Theory of Constraints is direct: the output of any system is capped by its weakest link. Networks are no exception. But the *nature* of the bottleneck changes depending on which layer you're looking at.
@@ -30,19 +55,23 @@ Packets travel down from L7 to L1 on the sender's side — each layer wrapping t
 
 <br>
 
-**L4 — Connections are the currency, and you can run out**
+**L4 — Speed was the goal. Awareness was the price.**
 
-Layer 4 is deliberately blind to content. It sees an IP address, a port number, a protocol — TCP or UDP — and nothing else. It never opens the packet. Think of it as a courier that delivers sealed envelopes without knowing what's inside. That constraint is also its superpower: it's fast precisely because it doesn't think.
+Layer 4 is deliberately blind to content. It sees an IP address, a port number, a protocol — TCP or UDP — and nothing else. It never opens the packet. Think of it as a courier that delivers sealed envelopes without knowing what's inside. That's why it's fast.
 
-The catch is structural. Every TCP connection occupies a port. Port numbers top out at 65,535 — with a realistic working range of around 28,000. Once concurrent connections hit that ceiling, the system stops accepting new ones. No exceptions. **L4's bottleneck is connection count.** Ticketing drops, flash sales, live-streamed events — any scenario where thousands of users connect simultaneously runs straight into this wall.
+But that choice has structural consequences. Every TCP connection occupies a port. Port numbers top out at 65,535 — with a realistic working range of around 28,000. Once concurrent connections hit that ceiling, the system stops accepting new ones. No exceptions.
+
+**L4's bottleneck is connection count.** Ticketing drops, flash sales, live-streamed events — any scenario where thousands of users connect simultaneously runs straight into this wall.
 
 <br>
 
-**L7 — Intelligence costs processing time**
+**L7 — Awareness was the goal. Speed was the price.**
 
-Layer 7 sees everything: HTTP headers, URL paths, cookies, request bodies. It reads the packet, understands the context, and makes decisions accordingly. That's enormously powerful — and structurally expensive.
+Layer 7 sees everything: HTTP headers, URL paths, cookies, request bodies. It reads the packet, understands the context, and makes decisions accordingly. That's enormously powerful.
 
-Parsing takes time. Authentication takes time. Decompression, routing logic, business rules — they all stack. The per-request Logic Latency at L7 is higher than anywhere below it by design. As traffic scales, those costs don't just add — they compound. L7 is where Saturation climbs fastest, and where performance degradation is felt first.
+But that knowledge is expensive. Parsing takes time. Authentication takes time. Decompression, routing logic, business rules — they all stack. The per-request Logic Latency at L7 is higher than anywhere below it by design. As traffic scales, those costs don't just add — they compound.
+
+L4 stays blind and stays fast. L7 stays aware and pays for it. Neither is a flawed design. They made different trade-offs.
 
 <br>
 
@@ -66,33 +95,12 @@ L7 hits the wall first. L1 going down means nothing gets through at all. Under h
 
 <br>
 
-### Why Each Layer Knows Nothing About the Others
-
-TOC tells us to find the constraint. But that raises a deeper question: why is the OSI model layered in the first place — and who decided that each layer should know nothing about the others?
-
-In 1968, software engineer Melvin Conway proposed what has since become foundational in systems design:
-
-> *"Any organization that designs a system will produce a design whose structure is a copy of the organization's communication structure."* — Conway's Law
-
-The OSI model is that principle applied to network architecture. Layer 4 has no idea whether Layer 7 is speaking HTTP or gRPC. Layer 3 doesn't know — or care — whether Layer 4 is TCP or UDP. Each layer interacts only through a well-defined interface. Internal implementation stays private. The contract is the only thing that's shared. That enforced interface is what keeps the cost of inter-layer coordination low.
-
-That deliberate ignorance produces two things simultaneously:
-
-* **Flexibility:** Migrating from HTTP/1.1 to HTTP/2 happens entirely within Layer 7. Everything below stays untouched. The layers are decoupled by design.
-* **Fault isolation:** A routing failure at Layer 3 has no bearing on your application logic at Layer 7. The blast radius is contained to one layer.
-
-For engineers diagnosing a production incident, the OSI model isn't just a reference chart. It's a building's floor plan — one that tells you exactly which room is on fire.
-
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://martinfowler.com/bliki/ConwaysLaw.html">Martin Fowler: Conway's Law</a>
-</div>
-
-<br>
-
 ### The Bottom Line
 
-The OSI model isn't a protocol classification system. Each layer is an independent failure candidate with its own breaking point. The layer where Saturation hits 100% first is the constraint — and the boundaries between layers are what make that constraint findable and fixable without touching everything else.
+The OSI model isn't a protocol classification system. Each layer is an independent failure candidate with its own breaking point. And the reason those layers exist in the first place is itself a trade-off — give up awareness to gain speed, or give up speed to gain awareness.
 
-**Engineers who understand this don't panic when something breaks. They don't touch the whole system. They ask which layer. Then they fix that layer. That's not just good engineering — it's the only decision that makes sense under constraint.**
+The layer where Saturation hits 100% first is the constraint. The boundaries between layers are what make that constraint findable — and fixable — without touching everything else.
+
+**Engineers who understand this don't panic when something breaks. They don't touch the whole system. They ask which layer. Then they fix that layer.**
 
 Next up: Layer 4, up close. We'll look at the hidden cost of TCP's 3-way handshake — the process every connection must complete before a single byte of real data moves. Under load, that turns out to be anything but cheap.
