@@ -3,6 +3,7 @@ title: 프롤로그 - 대용량 처리(Large-scale Processing)란 무엇인가?
 description: 대용량 처리의 본질, 4가지 황금 신호(Golden Signals), 그리고 제약이론(TOC)의 결합
 sidebar:
   order: 1
+date: 2026-03-18
 ---
 
 > 2025년 10월 새벽 3시, AWS 서버 하나의 DNS 설정 오류로 Snapchat, Roblox, McDonald's 앱이 동시에 먹통이 되었다. 전 세계 60개국, 3,500개 기업이 이 작은 균열 하나로 동시에 멈췄다. 

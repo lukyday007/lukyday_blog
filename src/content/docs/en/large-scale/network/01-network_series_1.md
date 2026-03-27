@@ -3,6 +3,7 @@ title: Network Part 1 - The OSI Model as a Fault Map
 description: How to read the OSI model as a bottleneck diagnostic tool — the distinct failure modes of L4 and L7, and why Conway's Law explains the layered design.
 sidebar:
   order: 2
+date: 2026-03-27
 ---
 
 > In a previous post, we watched a single DNS misconfiguration on one AWS server bring 3,500 companies across 60 countries to a standstill. DNS lives at Layer 7. The failure started there.
