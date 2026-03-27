@@ -16,6 +16,10 @@ const formattedDate = publishedDate
 
 <Default {...Astro.props} />
 
+<p style="color: red;">
+  date raw: {String(publishedDate)} / formatted: {String(formattedDate)}
+</p>
+
 {formattedDate && (
   <p class="published-date">
     {isEnglish ? `Published: ${formattedDate}` : `작성일: ${formattedDate}`}
