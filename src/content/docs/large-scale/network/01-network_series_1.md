@@ -5,6 +5,7 @@ sidebar:
   order: 2
 date: 2026-03-27
 ---
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">작성일: 2026년 3월 27일</p>
 
 > 지난 글에서 우리는 AWS 서버 하나의 DNS 설정 오류가 전 세계 3,500개 기업을 동시에 멈춰 세우는 장면을 봤다. DNS는 OSI 7계층 중 L7에 속한다. 그 장애는 L7에서 시작됐다.
 >

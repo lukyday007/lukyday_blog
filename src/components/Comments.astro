@@ -6,25 +6,9 @@ import Footer from './Footer.astro';
 const url = Astro.url.pathname;
 const isEnglish = url.includes('/en/');
 const giscusLang = isEnglish ? 'en' : 'ko';
-
-const publishedDate = Astro.props.entry?.data?.date;
-const formattedDate = publishedDate 
-  ? new Date(publishedDate).toLocaleDateString(
-      isEnglish ? 'en-US' : 'ko-KR', 
-      { year: 'numeric', month: 'long', day: 'numeric' }
-    )
-  : null;
 ---
 
 <Default {...Astro.props} />
-
-<p style="color: red;">{JSON.stringify(Object.keys(Astro.props))}</p>
-
-{formattedDate && (
-  <p class="published-date">
-    {isEnglish ? `Published: ${formattedDate}` : `작성일: ${formattedDate}`}
-  </p>
-)}
 
 <Footer />
 
@@ -36,9 +20,7 @@ const formattedDate = publishedDate
   function loadGiscus() {
     const slot = document.getElementById('giscus-slot');
     if (!slot) return;
-    
     slot.innerHTML = '';
-    
     const script = document.createElement('script');
     script.src = "https://giscus.app/client.js";
     script.dataset.repo = "lukyday007/lukyday_blog";
@@ -54,10 +36,8 @@ const formattedDate = publishedDate
     script.dataset.lang = giscusLang;
     script.crossOrigin = "anonymous";
     script.async = true;
-
     slot.appendChild(script);
   }
-
   loadGiscus();
   document.addEventListener('astro:after-swap', loadGiscus);
 </script>
@@ -66,10 +46,5 @@ const formattedDate = publishedDate
   .giscus-container {
     margin-top: 3rem;
     width: 100%;
-  }
-  .published-date {
-    font-size: 0.85rem;
-    color: var(--sl-color-gray-3);
-    margin-top: 0.5rem;
   }
 </style>

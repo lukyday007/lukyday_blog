@@ -5,6 +5,7 @@ sidebar:
   order: 1
 date: 2026-03-18
 ---
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: March 18, 2026</p>
 
 > 3 AM, October 2025. A single DNS configuration error on an AWS server brought Snapchat, Roblox, and McDonald's to a standstill. 3,500 companies across 60 countries were stopped cold by one small crack.
 >

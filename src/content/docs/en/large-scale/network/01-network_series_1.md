@@ -5,6 +5,7 @@ sidebar:
   order: 2
 date: 2026-03-27
 ---
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: March 27, 2026</p>
 
 > In a previous post, we watched a single DNS misconfiguration on one AWS server bring 3,500 companies across 60 countries to a standstill. DNS lives at Layer 7. The failure started there.
 >
