@@ -2,14 +2,11 @@
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/PageTitle.astro';
 
-const url = Astro.url.pathname;
-const isEnglish = url.includes('/en/');
-
-const allData = JSON.stringify(Astro.props.entry?.data ?? {});
+const allProps = JSON.stringify(Object.keys(Astro.props));
 ---
 
 <Default {...Astro.props} />
 
-<p style="color: red; font-size: 0.75rem; word-break: break-all;">
-  {allData}
+<p style="color: red; font-size: 0.75rem;">
+  props keys: {allProps}
 </p>
