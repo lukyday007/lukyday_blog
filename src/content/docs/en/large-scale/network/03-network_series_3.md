@@ -15,23 +15,17 @@ date: 2026-04-25
 <br>
 <br>
 
-Keep-Alive reduced the handshake tax. The line was still single-file. That's Head-of-Line Blocking — and reusing connections couldn't fix it.
-
-<br>
-
 ### HTTP/1.1 — One Lane, No Exceptions
 
 HTTP/1.1 had one rigid rule: one connection handles one request at a time, in order.
 
-Keep-Alive meant you didn't have to renegotiate a new contract for every exchange. But the delivery itself was still sequential. One large image delayed at the front of the queue, and every lightweight text file behind it had to wait. The connection was alive — it just couldn't move two things at once.
-
-This is **Head-of-Line Blocking (HOLB)**. It's not a bug. It's a structural consequence of how HTTP/1.1 was designed.
+Keep-Alive meant you didn't have to renegotiate a new contract for every exchange. But the delivery itself was still sequential. One large image delayed at the front of the queue, and every lightweight text file behind it had to wait. The connection was alive — it just couldn't move two things at once. This is **Head-of-Line Blocking (HOLB)**.
 
 Browsers tried to route around it by opening up to six parallel connections per server. But that just brought back the port exhaustion and handshake overhead from Part 2. The problem wasn't solved. It was transferred — into a different form of cost.
 
 <br>
 
-### HTTP/2 — Multiplexing on a Single-Lane Road
+### HTTP/2 — Same Road, Different Lane
 
 Released in 2015, HTTP/2 attacked HOL Blocking at the application layer with **multiplexing**.
 
@@ -49,56 +43,88 @@ This is Path Dependency in action. **The choice to build HTTP on top of TCP mean
 
 <br>
 
-### HTTP/3 — Letting Go of TCP
+### HTTP/3 — Cutting the Path
 
-Eventually, Google made the call. Ditching TCP entirely.
+Google made the call. Ditching TCP entirely.
 
-QUIC was built on top of UDP — a protocol with no ordering guarantees, no built-in reliability, and no handshake overhead. Everything TCP provided had to be rebuilt from scratch, at the application layer. That was the point.
+But this is where a common misconception takes hold. Dropping TCP didn't mean dropping reliability. It meant replacing everything TCP did with something that did it better.
 
-**Independent streams.** In HTTP/3, a lost packet only stalls the request it belongs to. Every other stream keeps moving. True parallel processing — finally achieved, not approximated.
+The new foundation is UDP. Unlike TCP, UDP makes no guarantees — no ordering, no retransmission, no reliability. It just fires packets and moves on. Google built QUIC directly on top of that bare foundation — taking on everything TCP used to handle (retransmission, encryption, connection management), but doing it per stream. One stream stalls, the rest keep moving. HOL Blocking, gone at the root.
 
-**0-RTT.** If a client has connected to a server before, QUIC can skip the handshake entirely on the next visit. The 1.5 RTT cost from Part 2 collapses to zero.
+```
+┌─────────────────┐        ┌─────────────────┐
+│      Before     │        │      After      │
+├─────────────────┤        ├─────────────────┤
+│   HTTP/1.1·2    │        │     HTTP/3      │
+│        ↕        │    →   │        ↕        │
+│       TCP       │        │      QUIC       │
+│        ↕        │        │        ↕        │
+│       IP        │        │       UDP       │
+└─────────────────┘        └─────────────────┘
+```
+
+This is why HTTP/3 is called "UDP-based." QUIC sits on top of UDP, and HTTP/3 runs on top of QUIC. TCP wasn't abandoned — its role was replaced.
+
+**Why YouTube and Zoom were already on UDP**
+
+Real-time streaming services made this call long ago. When a packet drops during a video call, waiting for TCP to retransmit it freezes the screen. It's better to skip that moment and move to the next frame. When continuity matters more than completeness, TCP's reliability becomes a liability.
+
+QUIC brought that same instinct to general web traffic. A lost packet stalls only the stream it belongs to. Everything else keeps moving.
+
+**0-RTT — Cutting the cost of security too**
+
+The 1.5 RTT cost from Part 2 was just the TCP handshake. Add HTTPS, and TLS negotiation stacks on top. One connection, up to 3 RTT before a single byte of data moves.
+
+QUIC has TLS 1.3 built in — connection and security negotiation happen simultaneously. Return visits skip the handshake entirely. The 1.5 RTT from Part 2 collapses to zero.
+
+
+```
+┌─────────────────────┬────────────────────┐
+│     TCP + TLS       │        QUIC        │
+├─────────────────────┼────────────────────┤
+│    TCP   1.5 RTT    │ First visit 1 RTT  │
+│    TLS   1.5 RTT    │ Return visit 0RTT  │
+│    ──────────────   │                    │
+│    Total  3 RTT     │                    │
+└─────────────────────┴────────────────────┘
+
+```
 
 The trade-off is real. By abandoning TCP, the application now owns packet loss handling, connection reliability, and security. Simpler to use. Far more complex underneath.
 
+This is what the Innovator's Dilemma calls disruptive innovation. Not an improvement on what existed — a replacement of it.
+
 <div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.chromium.org/quic/">Chromium: QUIC</a><br>
-  <a href="https://www.rfc-editor.org/rfc/rfc9000">RFC 9000: QUIC — A UDP-Based Multiplexed and Secure Transport</a>
+  <a href="https://www.rfc-editor.org/rfc/rfc9000">RFC 9000: QUIC</a>
 </div>
 
 <br>
 
 ### How the Three Versions Compare
-
 ```
 HTTP/1.1  — Requests must wait in line
 time →  t1     t2     t3     t4     t5
 R1     [====] [====]
 R2                   [====] [====]
 R3                                 [====]
-
 R2 can't start until R1 finishes. R3 can't start until R2 finishes.
-
 ──────────────────────────────────────────
-
 HTTP/2  — One lost packet freezes everything
 time →  t1     t2     t3     t4     t5
 R1      [====] [====] [====]
 R2      [====] ✕ ← packet lost
 R3      [====]        ← waiting...  ← waiting...
-
 When ✕ occurs, R1, R2, and R3 all freeze.
-
 ──────────────────────────────────────────
-
 HTTP/3  — Only the affected stream pauses
 time →  t1     t2     t3     t4     t5
 R1      [====] [====] [====] [====]
 R2      [====] ✕ ← packet lost        [retransmit]
 R3      [====] [====] [====] [====] ← keeps moving
-
 When ✕ occurs, only R2 pauses. R1 and R3 continue.
 ```
+
 
 Each version made a different call on where to absorb the cost.
 
@@ -122,10 +148,8 @@ Where the two concepts meet is HTTP/3 itself. Path Dependency explains why it to
 
 ### The Bottom Line
 
-Every version of HTTP made the same kind of call: what do we keep, and what do we let go?
+HTTP/1.1 trimmed the negotiation fee. HTTP/2 increased the transaction density. HTTP/3 rejected the legacy constraints entirely to win back speed. The evolution of protocols isn't a search for the right answer. It's a history of choosing the best trade-off for the era.
 
-HTTP/1.1 kept TCP and trimmed the overhead. HTTP/2 kept TCP and parallelized around it. HTTP/3 let TCP go entirely.
-
-**The evolution of protocols isn't a search for the right answer. It's a series of trade-offs, each one shaped by what the last one couldn't solve.**
+**Improve along the path, or change the path itself. That question doesn't only apply to protocols.**
 
 Next up: even with HTTP/3 handling requests efficiently, traffic still has to land somewhere. When tens of thousands of requests arrive at once, something has to decide where they go. That's the load balancer — and the choice between L4 and L7 turns out to be another trade-off worth understanding.
