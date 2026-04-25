@@ -51,10 +51,6 @@ export default defineConfig({
 					label: 'Large-Scale',
 					autogenerate: { directory: 'large-scale' },
 				},
-				{
-					label: 'CS Basics',
-					autogenerate: { directory: 'cs-basics' },
-				},
 			],
 		}),
 	],
