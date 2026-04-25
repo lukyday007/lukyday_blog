@@ -130,7 +130,7 @@ Each version made a different call on where to absorb the cost.
 
 <br>
 
-### The Business Lens — Path Dependency and the Innovator's Dilemma
+### Path Dependency and the Innovator's Dilemma
 
 The evolution of HTTP is a case study in two management concepts that explain why the right answer takes so long to arrive.
 
