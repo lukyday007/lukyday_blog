@@ -28,48 +28,35 @@ The most primitive form of load balancing starts at DNS. Register multiple serve
   <a href="https://www.cloudflare.com/learning/performance/what-is-dns-load-balancing/">Cloudflare Learning: What is DNS load balancing?</a>
 </div>
 
-<div style="border: 1px solid #4B5563 !important; border-radius: 12px !important; padding: 30px 15px !important; margin: 2rem 0 !important; display: flex !important; flex-direction: column !important; align-items: center !important; background: transparent !important; width: 100% !important; box-sizing: border-box !important;">
-  {/* Client */}
-  <div style="background: #23262b !important; border: 1px solid #4B5563 !important; border-radius: 8px !important; padding: 10px 30px !important; font-size: 14px !important; color: white !important; font-weight: 600 !important; margin: 0 !important;">Client</div>
-  
-  <div style="color: #9CA3AF !important; font-size: 20px !important; margin: 5px 0 !important;">↓</div>
-  <div style="font-size: 11px !important; color: #9CA3AF !important; margin-bottom: 5px !important;">"What's example.com?"</div>
 
-  {/* DNS Server */}
-  <div style="background: #EEEDFE !important; border: 1.5px solid #7F77DD !important; border-radius: 8px !important; padding: 15px !important; width: 260px !important; text-align: center !important; margin: 0 !important;">
-    <div style="font-weight: 700 !important; color: #3C3489 !important; font-size: 15px !important; margin: 0 !important;">DNS Server</div>
-    <div style="font-size: 11px !important; color: #534AB7 !important; margin-top: 4px !important;">Returns a different IP each time</div>
-  </div>
+```
+                ┌───────────────┐
+                │     Client    │
+                └───────────────┘
+                        ↓
+              "What's example.com?"
+                        ↓
+    ┌──────────────────────────────────────┐
+    │               DNS Server             │
+    │  (Returns a different IP each time)  │
+    └──────────────────────────────────────┘
+        ┌───────────────┼───────────────┐
+  [1st request]   [2nd request]    [3rd request]
+       ↙                ↓                ↘
+ ┌────────────┐   ┌────────────┐   ┌────────────┐
+ │  Server A  │   │ Server B   │   │  Server C  │
+ │192.168.0.1 │   │192.168.0.2 │   │192.168.0.3 │
+ └────────────┘   └────────────┘   └────────────┘
 
-  {/* Requests Indicators */}
-  <div style="display: flex !important; flex-direction: row !important; justify-content: center !important; gap: 8px !important; margin: 15px 0 !important; width: 100% !important;">
-    <span style="font-size: 10px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #E6F1FB !important; color: #185FA5 !important; border: 1px solid #378ADD !important;">1st request</span>
-    <span style="font-size: 10px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #EAF3DE !important; color: #3B6D11 !important; border: 1px solid #639922 !important;">2nd request</span>
-    <span style="font-size: 10px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #FAEEDA !important; color: #854F0B !important; border: 1px solid #BA7517 !important;">3rd request</span>
-  </div>
+[Structural limits]
 
-  <div style="display: flex !important; flex-direction: row !important; justify-content: center !important; gap: 80px !important; color: #9CA3AF !important; font-size: 20px !important; margin-bottom: 5px !important;">
-    <span>↙</span><span>↓</span><span>↘</span>
-  </div>
-
-  {/* Servers Row - 핵심: flex-direction row 강제 */}
-  <div style="display: flex !important; flex-direction: row !important; gap: 10px !important; width: 100% !important; align-items: stretch !important;">
-    <div style="flex: 1 !important; background: #E6F1FB !important; border: 1.5px solid #378ADD !important; border-radius: 8px !important; padding: 12px 5px !important; text-align: center !important; color: #185FA5 !important; min-width: 0 !important;">
-      <strong style="display: block !important; font-size: 12px !important; margin-bottom: 4px !important;">Server A</strong>
-      <span style="font-size: 10px !important;">192.168.0.1</span>
-    </div>
-    <div style="flex: 1 !important; background: #EAF3DE !important; border: 1.5px solid #639922 !important; border-radius: 8px !important; padding: 12px 5px !important; text-align: center !important; color: #3B6D11 !important; min-width: 0 !important;">
-      <strong style="display: block !important; font-size: 12px !important; margin-bottom: 4px !important;">Server B</strong>
-      <span style="font-size: 10px !important;">192.168.0.2</span>
-    </div>
-    <div style="flex: 1 !important; background: #FAEEDA !important; border: 1.5px solid #BA7517 !important; border-radius: 8px !important; padding: 12px 5px !important; text-align: center !important; color: #854F0B !important; min-width: 0 !important;">
-      <strong style="display: block !important; font-size: 12px !important; margin-bottom: 4px !important;">Server C</strong>
-      <span style="font-size: 10px !important;">192.168.0.3</span>
-    </div>
-  </div>
-</div>
-
-<br/>
+✗ Blind to server state
+  → DNS keeps returning Server A even when it's overloaded
+✗ Can't detect failures
+  → DNS keeps responding with Server B's IP even after it goes down
+✗ TTL caching
+  → once a client receives an IP, it keeps hitting that server until TTL expires
+```
 
 The design of DNS round-robin looks flawless on paper. Imagine a theme park with three parking lots — A, B, and C. The navigation app at the entrance distributes cars in order: first car to A, second to B, third to C. Arithmetically perfect.
 
@@ -89,31 +76,26 @@ The server distributed traffic correctly. The only problem is that the cars held
 
 L4 load balancers follow the same philosophy as the L4 layer from Part 1. They never look inside the packet. They check the destination address (IP) and the door number (port), then decide which server to send it to.
 
-<div style="border: 1px solid #4B5563 !important; border-radius: 12px !important; padding: 25px !important; margin: 2rem 0 !important; display: flex !important; flex-direction: column !important; background: transparent !important; width: 100% !important; box-sizing: border-box !important;">
-  <div style="margin-bottom: 20px !important;">
-    <div style="font-size: 17px !important; font-weight: 700 !important; color: white !important; margin: 0 !important;">L4 Load Balancer</div>
-    <div style="font-size: 12px !important; color: #9CA3AF !important; margin: 5px 0 10px 0 !important;">Fast because it never reads the content</div>
-    <span style="font-size: 10px !important; padding: 2px 10px !important; border-radius: 20px !important; background: #E6F1FB !important; color: #185FA5 !important; border: 1px solid #378ADD !important;">Transport Layer</span>
-  </div>
+```
+[Transport Layer]
 
-  <div style="background: #23262b !important; border: 1px solid #4B5563 !important; border-radius: 8px !important; padding: 12px !important; text-align: center !important; font-size: 14px !important; color: white !important;">Client Request</div>
-  <div style="color: #9CA3AF !important; font-size: 20px !important; text-align: center !important; margin: 5px 0 !important;">↓</div>
-
-  <div style="background: #E6F1FB !important; border: 1.5px solid #378ADD !important; border-radius: 8px !important; padding: 15px !important; color: #0C447C !important; margin: 0 !important;">
-    <div style="font-weight: 700 !important; font-size: 14px !important; margin-bottom: 8px !important;">L4 Load Balancer Check:</div>
-    <div style="font-size: 13px !important; margin: 2px 0 !important;">✓ IP address / Port number</div>
-    <div style="font-size: 13px !important; color: #7096BB !important; margin: 2px 0 !important;">✗ Packet content (never opened)</div>
-  </div>
-
-  <div style="color: #9CA3AF !important; font-size: 20px !important; text-align: center !important; margin: 5px 0 !important;">↓</div>
-
-  <div style="display: flex !important; flex-direction: row !important; gap: 10px !important; width: 100% !important;">
-    <div style="flex: 1 !important; background: #23262b !important; border: 1px solid #4B5563 !important; border-radius: 8px !important; padding: 15px !important; text-align: center !important; color: #9CA3AF !important; font-size: 13px !important;">Server A</div>
-    <div style="flex: 1 !important; background: #23262b !important; border: 1px solid #4B5563 !important; border-radius: 8px !important; padding: 15px !important; text-align: center !important; color: #9CA3AF !important; font-size: 13px !important;">Server B</div>
-  </div>
-</div>
-
-<br/>
+            ┌───────────────────┐
+            │   Client Request  │
+            └───────────────────┘      
+                      ↓
+      ┌─────────────────────────────────┐
+      │         L4 Load Balancer        │
+      │                                 │
+      │         ✓ IP address            │
+      │         ✓ Port number           │
+      │ ✗ Packet content (never opened) │
+      └─────────────────────────────────┘    
+        ↙             ↓             ↘
+  ┌───────────┐ ┌───────────┐ ┌───────────┐
+  │ Server A  │ │ Server B  │ │ Server C  │
+  └───────────┘ └───────────┘ └───────────┘      
+( Distributed by IP hash or least connections )        
+```
 
 Not reading the content means processing is fast. It can handle millions of concurrent connections. Game servers — where thousands of clients are holding simple TCP connections simultaneously — are a natural fit.
 
@@ -125,30 +107,27 @@ The trade-off is clear. Because L4 never opens the packet, it can't route based 
 
 L7 load balancers open the packet and read it. HTTP headers, URL paths, cookies, even the request body. They understand what the request is asking for before deciding where to send it.
 
-<div style="border: 1px solid #4B5563 !important; border-radius: 12px !important; padding: 25px !important; margin: 2rem 0 !important; display: flex !important; flex-direction: column !important; background: transparent !important; width: 100% !important; box-sizing: border-box !important;">
-  <div style="margin-bottom: 20px !important;">
-    <div style="font-size: 17px !important; font-weight: 700 !important; color: white !important; margin: 0 !important;">L7 Load Balancer</div>
-    <div style="font-size: 12px !important; color: #9CA3AF !important; margin: 5px 0 10px 0 !important;">Slower because it reads before routing</div>
-    <span style="font-size: 10px !important; padding: 2px 10px !important; border-radius: 20px !important; background: #E1F5EE !important; color: #0F6E56 !important; border: 1px solid #1D9E75 !important;">Application Layer</span>
-  </div>
+```
+[Application Layer]
 
-  <div style="background: #23262b !important; border: 1px solid #4B5563 !important; border-radius: 8px !important; padding: 12px !important; text-align: center !important; font-size: 14px !important; color: white !important;">Client Request</div>
-  <div style="color: #9CA3AF !important; font-size: 20px !important; text-align: center !important; margin: 5px 0 !important;">↓</div>
-
-  <div style="background: #E1F5EE !important; border: 1.5px solid #1D9E75 !important; border-radius: 8px !important; padding: 15px !important; color: #0F6E56 !important; margin: 0 !important;">
-    <div style="font-weight: 700 !important; font-size: 14px !important; margin-bottom: 8px !important;">L7 Load Balancer Check:</div>
-    <div style="font-size: 13px !important; margin: 2px 0 !important;">✓ URL Path (/payment, /user)</div>
-    <div style="font-size: 13px !important; margin: 2px 0 !important;">✓ HTTP Headers / Cookies</div>
-  </div>
-
-  <div style="color: #9CA3AF !important; font-size: 20px !important; text-align: center !important; margin: 5px 0 !important;">↓</div>
-
-  <div style="display: flex !important; flex-direction: row !important; gap: 10px !important; width: 100% !important;">
-    <div style="flex: 1 !important; background: #E6F1FB !important; border: 1.5px solid #378ADD !important; border-radius: 8px !important; padding: 12px 2px !important; text-align: center !important; color: #185FA5 !important; font-size: 11px !important; font-weight: 700 !important;">Payment Server</div>
-    <div style="flex: 1 !important; background: #EAF3DE !important; border: 1.5px solid #639922 !important; border-radius: 8px !important; padding: 12px 2px !important; text-align: center !important; color: #3B6D11 !important; font-size: 11px !important; font-weight: 700 !important;">Product Server</div>
-    <div style="flex: 1 !important; background: #FAEEDA !important; border: 1.5px solid #BA7517 !important; border-radius: 8px !important; padding: 12px 2px !important; text-align: center !important; color: #854F0B !important; font-size: 11px !important; font-weight: 700 !important;">User Server</div>
-  </div>
-</div>
+                       ┌───────────────────┐
+                       │   Client Request  │
+                       └───────────────────┘
+                                 ↓
+            ┌─────────────────────────────────────────┐
+            │         L7 Load Balancer Check          │
+            │                                         │
+            │       ✓ IP address / Port number        │
+            │           ✓ HTTP  method / URL          │
+            │             ✓ Host header               │
+            │        ✓ Cookies / Request Body         │ 
+            └─────────────────────────────────────────┘    
+           ↙                     ↓                  ↘
+  ┌─────────────────┐  ┌──────────────────┐   ┌─────────────┐
+  │  Payment Server │  │  Product Server  │   │ User Server │
+  └─────────────────┘  └──────────────────┘   └─────────────┘   
+                      ( Routed by URL path )
+```
 
 Reading the URL means `/api/payments` goes to the payments server and `/api/products` goes to the product server. Reading cookies makes **Session Persistence** possible. 
 If a user's shopping cart is stored on Server A, that user needs to keep hitting Server A — otherwise the cart disappears. L7 reads the user ID from the cookie and routes every subsequent request from that user to the same server.
