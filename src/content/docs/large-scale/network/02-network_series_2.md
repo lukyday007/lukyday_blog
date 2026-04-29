@@ -3,7 +3,10 @@ title: 네트워크 2편 - TCP 핸드셰이크, 연결의 비용
 description: TCP 3-way handshake의 구조적 비용, RTT와 TIME_WAIT가 대용량 트래픽에서 갖는 의미, 그리고 거래 비용 이론으로 읽는 Keep-Alive의 탄생.
 sidebar:
   order: 3
+date: 2026-04-13
 ---
+
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">작성일: 2026년 4월 13일</p>
 
 > TCP가 신뢰를 보장하는 방식은 단순하다. 먼저 계약을 맺는 것. 그런데 그 계약이 얼마나 비싼지 생각해본 적 있는가?
 >

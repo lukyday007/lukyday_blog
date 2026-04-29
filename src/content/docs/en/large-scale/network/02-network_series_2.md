@@ -3,7 +3,11 @@ title: Network Part 2 - The Cost of a TCP Handshake
 description: The structural cost of TCP's 3-way handshake — what RTT and TIME_WAIT mean under high-volume traffic, and why Transaction Cost Theory explains the birth of Keep-Alive.
 sidebar:
   order: 3
+date: 2026-04-13
 ---
+
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: April 13, 2026</p>
+
 
 > TCP's approach to reliability is straightforward: establish a contract before sending anything. But have you ever stopped to think about how expensive that contract actually is?
 >
