@@ -6,55 +6,12 @@ sidebar:
 date: 2026-04-29
 ---
 
-<style>
-  /* 스타라이트 기본 스타일 간섭 방지용 리셋 */
-  .diagram-wrapper {
-    all: initial;
-    display: block;
-    font-family: 'Inter', sans-serif;
-    margin: 2rem 0;
-    color: var(--sl-color-white);
-  }
-  .diagram-container {
-    border: 0.5px solid #4B5563;
-    border-radius: 12px;
-    padding: 1.5rem;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-  }
-  .node {
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    text-align: center;
-    font-weight: 500;
-    border: 0.5px solid #4B5563;
-  }
-  .arrow {
-    font-size: 18px;
-    color: #9CA3AF;
-    margin: 4px 0;
-  }
-  .server-group {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    width: 100%;
-    margin-top: 8px;
-  }
-  .server-node {
-    flex: 1;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 12px;
-    font-weight: 500;
-    text-align: center;
-    border: 0.5px solid;
-  }
-</style>
+<style>{`
+  /* 스타라이트 테마의 기본 테이블/박스 스타일 강제 무력화 */
+  .custom-diagram * { box-sizing: border-box !important; }
+  .custom-diagram { line-height: 1.2 !important; text-decoration: none !important; }
+  .custom-diagram div { margin: 0 !important; }
+`}</style>
 
 <p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: April 29, 2026</p>
 
@@ -78,30 +35,26 @@ The most primitive form of load balancing starts at DNS. Register multiple serve
   <a href="https://www.cloudflare.com/learning/performance/what-is-dns-load-balancing/">Cloudflare Learning: What is DNS load balancing?</a>
 </div>
 
-<div class="diagram-wrapper">
-  <div class="diagram-container">
-    <div class="node" style="background: var(--sl-color-bg-nav); width: 160px;">Client</div>
-    <div class="arrow">↓</div>
-    <div style="font-size: 11px; color: #9CA3AF; margin-bottom: 4px;">What's example.com?</div>
-    <div class="node" style="background: #EEEDFE; border-color: #7F77DD; color: #3C3489; width: 220px;">
-      DNS Server
-      <div style="font-size: 11px; color: #534AB7; font-weight: 400; margin-top: 4px;">Returns a different IP each time</div>
-    </div>
-    <div style="display: flex; gap: 8px; margin: 12px 0;">
-       <span style="font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #E6F1FB; color: #185FA5; border: 0.5px solid #378ADD;">1st request</span>
-       <span style="font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #EAF3DE; color: #3B6D11; border: 0.5px solid #639922;">2nd request</span>
-       <span style="font-size: 10px; padding: 2px 8px; border-radius: 20px; background: #FAEEDA; color: #854F0B; border: 0.5px solid #BA7517;">3rd request</span>
-    </div>
-    <div style="display: flex; gap: 60px; color: #9CA3AF;"><span>↙</span><span>↓</span><span>↘</span></div>
-    <div class="server-group">
-      <div class="server-node" style="background: #E6F1FB; border-color: #378ADD; color: #185FA5;">Server A<br/><small>192.168.0.1</small></div>
-      <div class="server-node" style="background: #EAF3DE; border-color: #639922; color: #3B6D11;">Server B<br/><small>192.168.0.2</small></div>
-      <div class="server-node" style="background: #FAEEDA; border-color: #BA7517; color: #854F0B;">Server C<br/><small>192.168.0.3</small></div>
-    </div>
+<div class="custom-diagram" style="border: 0.5px solid #4B5563 !important; border-radius: 12px !important; padding: 24px !important; display: flex !important; flex-direction: column !important; align-items: center !important; background: transparent !important; margin: 2rem 0 !important;">
+  <div style="background: var(--sl-color-bg-nav) !important; border: 0.5px solid #4B5563 !important; border-radius: 8px !important; padding: 10px 20px !important; font-size: 13px !important; font-weight: 500 !important; color: var(--sl-color-white) !important; width: 160px !important; text-align: center !important;">Client</div>
+  <div style="font-size: 18px !important; color: #9CA3AF !important; margin: 5px 0 !important;">↓</div>
+  <div style="font-size: 11px !important; color: #9CA3AF !important; margin-bottom: 5px !important;">What's example.com?</div>
+  <div style="background: #EEEDFE !important; border: 0.5px solid #7F77DD !important; border-radius: 8px !important; padding: 12px !important; width: 220px !important; text-align: center !important;">
+    <div style="font-weight: 600 !important; color: #3C3489 !important; font-size: 14px !important;">DNS Server</div>
+    <div style="font-size: 11px !important; color: #534AB7 !important; margin-top: 4px !important;">Returns a different IP each time</div>
+  </div>
+  <div style="display: flex !important; gap: 8px !important; margin: 15px 0 !important;">
+    <span style="font-size: 10px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #E6F1FB !important; color: #185FA5 !important; border: 0.5px solid #378ADD !important;">1st request</span>
+    <span style="font-size: 10px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #EAF3DE !important; color: #3B6D11 !important; border: 0.5px solid #639922 !important;">2nd request</span>
+    <span style="font-size: 10px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #FAEEDA !important; color: #854F0B !important; border: 0.5px solid #BA7517 !important;">3rd request</span>
+  </div>
+  <div style="display: flex !important; gap: 65px !important; color: #9CA3AF !important; font-size: 18px !important;"><span>↙</span><span>↓</span><span>↘</span></div>
+  <div style="display: flex !important; gap: 10px !important; width: 100% !important; margin-top: 10px !important;">
+    <div style="flex: 1 !important; background: #E6F1FB !important; border: 0.5px solid #378ADD !important; border-radius: 8px !important; padding: 12px 8px !important; text-align: center !important; color: #185FA5 !important;"><strong style="display:block !important; font-size:12px !important;">Server A</strong><span style="font-size:10px !important;">192.168.0.1</span></div>
+    <div style="flex: 1 !important; background: #EAF3DE !important; border: 0.5px solid #639922 !important; border-radius: 8px !important; padding: 12px 8px !important; text-align: center !important; color: #3B6D11 !important;"><strong style="display:block !important; font-size:12px !important;">Server B</strong><span style="font-size:10px !important;">192.168.0.2</span></div>
+    <div style="flex: 1 !important; background: #FAEEDA !important; border: 0.5px solid #BA7517 !important; border-radius: 8px !important; padding: 12px 8px !important; text-align: center !important; color: #854F0B !important;"><strong style="display:block !important; font-size:12px !important;">Server C</strong><span style="font-size:10px !important;">192.168.0.3</span></div>
   </div>
 </div>
-
-<br/>
 
 The design of DNS round-robin looks flawless on paper. Imagine a theme park with three parking lots — A, B, and C. The navigation app at the entrance distributes cars in order: first car to A, second to B, third to C. Arithmetically perfect.
 
@@ -121,31 +74,28 @@ The server distributed traffic correctly. The only problem is that the cars held
 
 L4 load balancers follow the same philosophy as the L4 layer from Part 1. They never look inside the packet. They check the destination address (IP) and the door number (port), then decide which server to send it to.
 
-<div class="diagram-wrapper">
-  <div class="diagram-container">
-    <div style="align-self: flex-start; width: 100%;">
-      <div style="font-size: 15px; font-weight: 600;">L4 Load Balancer</div>
-      <div style="font-size: 12px; color: #9CA3AF; margin-bottom: 12px;">Fast because it never reads the content</div>
-      <span style="font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #E6F1FB; color: #185FA5; border: 0.5px solid #378ADD;">Transport Layer</span>
+<div class="custom-diagram" style="border: 0.5px solid #4B5563 !important; border-radius: 12px !important; padding: 24px !important; margin: 2rem 0 !important; background: transparent !important;">
+  <div style="margin-bottom: 15px !important;">
+    <div style="font-size: 15px !important; font-weight: 600 !important; color: var(--sl-color-white) !important;">L4 Load Balancer</div>
+    <div style="font-size: 12px !important; color: #9CA3AF !important; margin-bottom: 10px !important;">Fast because it never reads the content</div>
+    <span style="font-size: 11px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #E6F1FB !important; color: #185FA5 !important; border: 0.5px solid #378ADD !important;">Transport Layer</span>
+  </div>
+  <div style="display: flex !important; flex-direction: column !important; align-items: center !important;">
+    <div style="width: 100% !important; background: var(--sl-color-bg-nav) !important; border: 0.5px solid #4B5563 !important; border-radius: 8px !important; padding: 10px !important; text-align: center !important; font-size: 13px !important; color: var(--sl-color-white) !important;">Client Request</div>
+    <div style="font-size: 18px !important; color: #9CA3AF !important; margin: 4px 0 !important;">↓</div>
+    <div style="width: 100% !important; background: #E6F1FB !important; border: 0.5px solid #378ADD !important; border-radius: 8px !important; padding: 15px !important; text-align: left !important;">
+      <div style="font-weight: 600 !important; color: #0C447C !important; font-size: 13px !important; margin-bottom: 8px !important;">L4 Load Balancer</div>
+      <div style="font-size: 12px !important; color: #185FA5 !important; margin-bottom: 3px !important;">✓ IP address</div>
+      <div style="font-size: 12px !important; color: #185FA5 !important; margin-bottom: 3px !important;">✓ Port number</div>
+      <div style="font-size: 12px !important; color: #9CA3AF !important;">✗ Packet content (never opened)</div>
     </div>
-    <div class="node" style="background: var(--sl-color-bg-nav); width: 100%; margin-top: 16px;">Client Request</div>
-    <div class="arrow">↓</div>
-    <div class="node" style="background: #E6F1FB; border-color: #378ADD; width: 100%; text-align: left; padding: 12px;">
-      <div style="font-weight: 600; color: #0C447C; margin-bottom: 6px;">L4 Load Balancer</div>
-      <div style="font-size: 12px; color: #185FA5;">✓ IP address</div>
-      <div style="font-size: 12px; color: #185FA5;">✓ Port number</div>
-      <div style="font-size: 12px; color: #9CA3AF;">✗ Packet content (never opened)</div>
+    <div style="font-size: 18px !important; color: #9CA3AF !important; margin: 4px 0 !important;">↓</div>
+    <div style="display: flex !important; gap: 10px !important; width: 100% !important;">
+      <div style="flex: 1 !important; border: 0.5px solid #4B5563 !important; border-radius: 8px !important; padding: 10px !important; text-align: center !important; font-size: 12px !important; color: #9CA3AF !important; background: var(--sl-color-bg-nav) !important;">Server A</div>
+      <div style="flex: 1 !important; border: 0.5px solid #4B5563 !important; border-radius: 8px !important; padding: 10px !important; text-align: center !important; font-size: 12px !important; color: #9CA3AF !important; background: var(--sl-color-bg-nav) !important;">Server B</div>
     </div>
-    <div class="arrow">↓</div>
-    <div class="server-group">
-      <div class="server-node" style="background: var(--sl-color-bg-nav); color: #9CA3AF;">Server A</div>
-      <div class="server-node" style="background: var(--sl-color-bg-nav); color: #9CA3AF;">Server B</div>
-    </div>
-    <div style="font-size: 11px; color: #9CA3AF; margin-top: 12px;">Distributed by IP hash or least connections</div>
   </div>
 </div>
-
-<br/>
 
 Not reading the content means processing is fast. It can handle millions of concurrent connections. Game servers — where thousands of clients are holding simple TCP connections simultaneously — are a natural fit.
 
@@ -157,29 +107,28 @@ The trade-off is clear. Because L4 never opens the packet, it can't route based 
 
 L7 load balancers open the packet and read it. HTTP headers, URL paths, cookies, even the request body. They understand what the request is asking for before deciding where to send it.
 
-<div class="diagram-wrapper">
-  <div class="diagram-container">
-    <div style="align-self: flex-start; width: 100%;">
-      <div style="font-size: 15px; font-weight: 600;">L7 Load Balancer</div>
-      <div style="font-size: 12px; color: #9CA3AF; margin-bottom: 12px;">Slower because it reads before routing</div>
-      <span style="font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #E1F5EE; color: #0F6E56; border: 0.5px solid #1D9E75;">Application Layer</span>
+<div class="custom-diagram" style="border: 0.5px solid #4B5563 !important; border-radius: 12px !important; padding: 24px !important; margin: 2rem 0 !important; background: transparent !important;">
+  <div style="margin-bottom: 15px !important;">
+    <div style="font-size: 15px !important; font-weight: 600 !important; color: var(--sl-color-white) !important;">L7 Load Balancer</div>
+    <div style="font-size: 12px !important; color: #9CA3AF !important; margin-bottom: 10px !important;">Slower because it reads before routing</div>
+    <span style="font-size: 11px !important; padding: 2px 8px !important; border-radius: 20px !important; background: #E1F5EE !important; color: #0F6E56 !important; border: 0.5px solid #1D9E75 !important;">Application Layer</span>
+  </div>
+  <div style="display: flex !important; flex-direction: column !important; align-items: center !important;">
+    <div style="width: 100% !important; background: var(--sl-color-bg-nav) !important; border: 0.5px solid #4B5563 !important; border-radius: 8px !important; padding: 10px !important; text-align: center !important; font-size: 13px !important; color: var(--sl-color-white) !important;">Client Request</div>
+    <div style="font-size: 18px !important; color: #9CA3AF !important; margin: 4px 0 !important;">↓</div>
+    <div style="width: 100% !important; background: #E1F5EE !important; border: 0.5px solid #1D9E75 !important; border-radius: 8px !important; padding: 15px !important; text-align: left !important;">
+      <div style="font-weight: 600 !important; color: #0F6E56 !important; font-size: 13px !important; margin-bottom: 8px !important;">L7 Load Balancer</div>
+      <div style="font-size: 12px !important; color: #0F6E56 !important; margin-bottom: 3px !important;">✓ IP address / Port</div>
+      <div style="font-size: 12px !important; color: #0F6E56 !important; margin-bottom: 3px !important;">✓ HTTP method / URL</div>
+      <div style="font-size: 12px !important; color: #0F6E56 !important; margin-bottom: 3px !important;">✓ Host header</div>
+      <div style="font-size: 12px !important; color: #0F6E56 !important;">✓ Cookie / Request body</div>
     </div>
-    <div class="node" style="background: var(--sl-color-bg-nav); width: 100%; margin-top: 16px;">Client Request</div>
-    <div class="arrow">↓</div>
-    <div class="node" style="background: #E1F5EE; border-color: #1D9E75; width: 100%; text-align: left; padding: 12px;">
-      <div style="font-weight: 600; color: #0F6E56; margin-bottom: 6px;">L7 Load Balancer</div>
-      <div style="font-size: 12px; color: #0F6E56;">✓ IP address / Port</div>
-      <div style="font-size: 12px; color: #0F6E56;">✓ HTTP method / URL</div>
-      <div style="font-size: 12px; color: #0F6E56;">✓ Host header</div>
-      <div style="font-size: 12px; color: #0F6E56;">✓ Cookie / Request body</div>
+    <div style="font-size: 18px !important; color: #9CA3AF !important; margin: 4px 0 !important;">↓</div>
+    <div style="display: flex !important; gap: 10px !important; width: 100% !important;">
+      <div style="flex: 1 !important; background: #E6F1FB !important; border: 0.5px solid #378ADD !important; border-radius: 8px !important; padding: 12px 5px !important; text-align: center !important; color: #185FA5 !important; font-size: 11px !important; font-weight: 600 !important;">Payment Server</div>
+      <div style="flex: 1 !important; background: #EAF3DE !important; border: 0.5px solid #639922 !important; border-radius: 8px !important; padding: 12px 5px !important; text-align: center !important; color: #3B6D11 !important; font-size: 11px !important; font-weight: 600 !important;">Product Server</div>
+      <div style="flex: 1 !important; background: #FAEEDA !important; border: 0.5px solid #BA7517 !important; border-radius: 8px !important; padding: 12px 5px !important; text-align: center !important; color: #854F0B !important; font-size: 11px !important; font-weight: 600 !important;">User Server</div>
     </div>
-    <div class="arrow">↓</div>
-    <div class="server-group">
-      <div class="server-node" style="background: #E6F1FB; border-color: #378ADD; color: #185FA5;">Payment Server</div>
-      <div class="server-node" style="background: #EAF3DE; border-color: #639922; color: #3B6D11;">Product Server</div>
-      <div class="server-node" style="background: #FAEEDA; border-color: #BA7517; color: #854F0B;">User Server</div>
-    </div>
-    <div style="font-size: 11px; color: #9CA3AF; margin-top: 12px;">Routed by URL path</div>
   </div>
 </div>
 
