@@ -33,7 +33,7 @@ The most primitive form of load balancing starts at DNS. Register multiple serve
   <div style="border-radius:8px;padding:10px 20px;font-size:13px;text-align:center;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-4);font-weight:500;width:160px;">Client</div>
   <div style="font-size:16px;color:var(--sl-color-gray-3);line-height:1.4;">↓</div>
   <div style="font-size:11px;color:var(--sl-color-gray-3);margin:-2px 0 2px;">What's example.com?</div>
-  <div style="border-radius:8px;padding:10px 20px;font-size:13px;text-align:center;background:#EEEDFE;border:0.5px solid #7F77DD;color:#3C3489;font-weight:500;width:200px;">DNS Server<div style="font-size:11px;color:#534AB7;margin-top:3px;font-weight:400;">Returns a different IP each time</div></div>
+  <div style="border-radius:8px;padding:10px 20px;font-size:13px;text-align:center;background:#EEEDFE;border:0.5px solid #7F77DD;color:#3C3489;font-weight:500;">DNS Server<div style="font-size:11px;color:#534AB7;margin-top:3px;font-weight:400;">Returns a different IP each time</div></div>
   <div style="margin:6px 0 2px;display:flex;gap:12px;justify-content:center;">
     <span style="font-size:10px;padding:2px 6px;border-radius:20px;background:#E6F1FB;color:#185FA5;border:0.5px solid #378ADD;">1st request</span>
     <span style="font-size:10px;padding:2px 6px;border-radius:20px;background:#EAF3DE;color:#3B6D11;border:0.5px solid #639922;">2nd request</span>
@@ -92,7 +92,7 @@ L4 load balancers follow the same philosophy as the L4 layer from Part 1. They n
       <div style="display:flex;align-items:center;gap:6px;font-size:12px;margin:3px 0;"><span style="color:#D85A30;">✗</span><span style="color:var(--sl-color-gray-2);">Packet content (never opened)</span></div>
     </div>
     <div style="font-size:18px;color:var(--sl-color-gray-3);line-height:1.2;">↓</div>
-    <table style="width:100%;border-collapse:separate;border-spacing:8px;">
+    <table style="width:100%;border-collapse:separate;border-spacing:8px;margin:0;">
     <tr>
       <td style="border-radius:8px;padding:8px;font-size:11px;font-weight:500;text-align:center;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">Server A</td>
       <td style="border-radius:8px;padding:8px;font-size:11px;font-weight:500;text-align:center;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">Server B</td>
@@ -127,7 +127,7 @@ L7 load balancers open the packet and read it. HTTP headers, URL paths, cookies,
       <div style="display:flex;align-items:center;gap:6px;font-size:12px;margin:3px 0;"><span style="color:#1D9E75;">✓</span><span style="color:#0F6E56;">Cookie / Request body</span></div>
     </div>
     <div style="font-size:18px;color:var(--sl-color-gray-3);line-height:1.2;">↓</div>
-    <table style="width:100%;border-collapse:separate;border-spacing:8px;">
+    <table style="width:100%;border-collapse:separate;border-spacing:8px;margin:0;">
     <tr>
       <td style="border-radius:8px;padding:8px;font-size:11px;font-weight:500;text-align:center;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">Payment Server</td>
       <td style="border-radius:8px;padding:8px;font-size:11px;font-weight:500;text-align:center;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">Product Server</td>
