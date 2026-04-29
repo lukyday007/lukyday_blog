@@ -45,9 +45,9 @@ date: 2026-04-29
     <span style="font-size:14px;color:var(--sl-color-gray-3);">↘</span>
   </div>
   <div style="display:flex;gap:12px;margin-top:4px;">
-    <div style="border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">서버 A<br><span style="font-size:10px;font-weight:400;">192.168.0.1</span></div>
-    <div style="border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">서버 B<br><span style="font-size:10px;font-weight:400;">192.168.0.2</span></div>
-    <div style="border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">서버 C<br><span style="font-size:10px;font-weight:400;">192.168.0.3</span></div>
+    <div style="flex:1 1 0;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">서버 A<br><span style="font-size:10px;font-weight:400;">192.168.0.1</span></div>
+    <div style="flex:1 1 0;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">서버 B<br><span style="font-size:10px;font-weight:400;">192.168.0.2</span></div>
+    <div style="flex:1 1 0;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">서버 C<br><span style="font-size:10px;font-weight:400;">192.168.0.3</span></div>
   </div>
 </div>
 <div style="margin-top:20px;border:0.5px solid var(--sl-color-gray-5);border-radius:12px;padding:14px 18px;">
@@ -95,8 +95,8 @@ L4 로드밸런서는 1편에서 말한 L4의 철학을 그대로 따른다. 패
     </div>
     <div style="font-size:18px;color:var(--sl-color-gray-3);line-height:1.2;">↓</div>
     <div style="display:flex;gap:8px;width:100%;">
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">서버 A</div>
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">서버 B</div>
+        <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">서버 A</div>
+        <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">서버 B</div>
     </div>
     <div style="font-size:11px;color:var(--sl-color-gray-2);margin-top:10px;text-align:center;line-height:1.5;">IP 해시 또는 최소 연결 수 기준</div>
   </div>
@@ -128,9 +128,9 @@ L7 로드밸런서는 패킷을 열어서 읽는다. HTTP 헤더, URL 경로, �
     </div>
     <div style="font-size:18px;color:var(--sl-color-gray-3);line-height:1.2;">↓</div>
     <div style="display:flex;gap:8px;width:100%;">
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">결제 서버</div>
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">상품 서버</div>
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">사용자 서버</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">결제 서버</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">상품 서버</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">사용자 서버</div>
     </div>
     <div style="font-size:11px;color:var(--sl-color-gray-2);margin-top:10px;text-align:center;line-height:1.5;">URL 경로 기준으로 라우팅</div>
   </div>

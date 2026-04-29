@@ -45,9 +45,10 @@ The most primitive form of load balancing starts at DNS. Register multiple serve
     <span style="font-size:14px;color:var(--sl-color-gray-3);">↘</span>
   </div>
   <div style="display:flex;gap:12px;margin-top:4px;">
-    <div style="border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">Server A<br><span style="font-size:10px;font-weight:400;">192.168.0.1</span></div>
-    <div style="border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">Server B<br><span style="font-size:10px;font-weight:400;">192.168.0.2</span></div>
-    <div style="border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">Server C<br><span style="font-size:10px;font-weight:400;">192.168.0.3</span></div>
+    <div style="flex:1 1 0;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">Server A<br><span style="font-size:10px;font-weight:400;">192.168.0.1</span></div>
+    <div style="flex:1 1 0;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">Server B<br><span style="font-size:10px;font-weight:400;">192.168.0.2</span></div>
+    <div style="flex:1 1 0;border-radius:8px;padding:10px 16px;font-size:12px;font-weight:500;text-align:center;min-width:80px;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">Server C<br><span style="font-size:10px;font-weight:400;">192.168.0.3</span></div>
+
   </div>
 </div>
 <div style="margin-top:20px;border:0.5px solid var(--sl-color-gray-5);border-radius:12px;padding:14px 18px;">
@@ -91,8 +92,8 @@ L4 load balancers follow the same philosophy as the L4 layer from Part 1. They n
     </div>
     <div style="font-size:18px;color:var(--sl-color-gray-3);line-height:1.2;">↓</div>
     <div style="display:flex;gap:8px;width:100%;">
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">Server A</div>
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">Server B</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">Server A</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:var(--sl-color-bg-nav);border:0.5px solid var(--sl-color-gray-5);color:var(--sl-color-gray-2);">Server B</div>
     </div>
     <div style="font-size:11px;color:var(--sl-color-gray-2);margin-top:10px;text-align:center;line-height:1.5;">Distributed by IP hash or least connections</div>
   </div>
@@ -124,9 +125,9 @@ L7 load balancers open the packet and read it. HTTP headers, URL paths, cookies,
     </div>
     <div style="font-size:18px;color:var(--sl-color-gray-3);line-height:1.2;">↓</div>
     <div style="display:flex;gap:8px;width:100%;">
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">Payment Server</div>
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">Product Server</div>
-      <div style="flex:1;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">User Server</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#E6F1FB;border:0.5px solid #378ADD;color:#185FA5;">Payment Server</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#EAF3DE;border:0.5px solid #639922;color:#3B6D11;">Product Server</div>
+      <div style="flex:1 1 0;text-align:center;border-radius:8px;padding:8px 4px;font-size:11px;font-weight:500;background:#FAEEDA;border:0.5px solid #BA7517;color:#854F0B;">User Server</div>
     </div>
     <div style="font-size:11px;color:var(--sl-color-gray-2);margin-top:10px;text-align:center;line-height:1.5;">Routed by URL path</div>
   </div>
