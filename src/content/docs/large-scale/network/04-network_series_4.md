@@ -209,7 +209,7 @@ URL을 읽을 수 있으니 `/api/payments`는 결제 서버로, `/api/products`
 물류 경영학에는 **Risk Pooling**이라는 개념이 있다. 재고를 한 창고에 모아둘지, 여러 지역에 분산할지에 따라 전체 물류 비용이 달라진다는 이론이다.
 
 <div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://hbr.org/1994/11/from-supply-chain-to-value-chain">HBR: Supply Chain Management and Risk Pooling</a>
+  <a href="https://en.wikipedia.org/wiki/Risk_pool">HBR: Supply Chain Management and Risk Pooling</a>
 </div>
 
 중앙 집중형 창고는 관리가 단순하다. 수요 예측도 쉽다. 한 지역에서 갑자기 수요가 폭증해도, 다른 지역의 재고를 끌어와 대응할 수 있다. 다만 부산 고객의 주문이 서울 창고에서 출발하니 배송에 하루가 더 걸린다. 관리는 효율적이지만 응답이 느리다.

@@ -208,7 +208,7 @@ If concurrent connection count is approaching its ceiling, use L4. If requests n
 Supply chain management has a theory called **Risk Pooling** — the idea that where you hold inventory determines not just logistics cost, but how quickly you can respond when demand shifts.
  
 <div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://hbr.org/1994/11/from-supply-chain-to-value-chain">HBR: Supply Chain Management and Risk Pooling</a>
+  <a href="https://en.wikipedia.org/wiki/Risk_pool">HBR: Supply Chain Management and Risk Pooling</a>
 </div>
 
 A centralized warehouse is simple to manage. Demand forecasting is easier. If one region spikes, you pull from inventory elsewhere. The downside: a customer in Busan waits an extra day for a shipment leaving Seoul. Efficient to manage, slow to respond.
