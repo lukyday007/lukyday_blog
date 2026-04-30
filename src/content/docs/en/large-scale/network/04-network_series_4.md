@@ -1,5 +1,5 @@
 ---
-title: Network Part 4 - Traffic Distribution, Where Do You Split the Load?
+title: Network Part 4 - Where to Split, Why to Read.?
 description: From the limits of DNS round-robin to the trade-offs of L4/L7 load balancers — where you split traffic determines what your system can and cannot do.
 sidebar:
   order: 5
@@ -15,13 +15,13 @@ date: 2026-04-29
 <br>
 <br>
 
-Not all load balancers work the same way. Some look only at the outside of a packet and route it fast. Others read what's inside before deciding where to send it. In Part 1, we established that L4 is fast because it doesn't look inside, and L7 is slower because it does. Load balancers face the same choice. Which layer do you split traffic at?
+Not all load balancers work the same way. Some look only at the outside of a packet and distribute it fast. Others read the contents and decide where to send it. In Part 1, we said L4 is fast because it doesn't know what's inside, and L7 is slower because it does. Load balancers face the same choice. Which layer do you split traffic at?
 
 <br>
 
-### DNS-Based Load Balancing — The Limits of the Simplest Approach
+### DNS Round Robin — Blind by Design
 
-The most primitive form of load balancing starts at DNS. Register multiple server IPs under a single domain, then rotate which IP gets returned with each request. This is **DNS round-robin**.
+The most primitive form of load balancing starts at DNS. Register multiple server IPs under a single domain, and return a different IP in rotation each time a request comes in. That's **DNS Round Robin**.
 
 <div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.cloudflare.com/learning/dns/glossary/round-robin-dns/">Cloudflare Learning: What is round-robin DNS?</a><br>
@@ -58,23 +58,31 @@ The most primitive form of load balancing starts at DNS. Register multiple serve
   → once a client receives an IP, it keeps hitting that server until TTL expires
 ```
 
-The design of DNS round-robin looks flawless on paper. Imagine a theme park with three parking lots — A, B, and C. The navigation app at the entrance distributes cars in order: first car to A, second to B, third to C. Arithmetically perfect.
+On paper, the design looks airtight. Imagine a theme park with three parking lots — A, B, and C. The navigation app at the entrance sends cars in rotation: first to A, next to B, then C. Arithmetically balanced.
+ 
+But the navigation app doesn't check the server every time. It trusts the answer it got for a fixed window. "This information is valid for 10 minutes" — timer starts, server goes unchecked. That's **TTL (Time-To-Live)**: an expiration date on information.
+ 
+Here's where the bottleneck emerges. Picture a convoy of hundreds of tour buses pulling in. The moment the lead bus gets "Head to Lot A," every bus behind it copies that answer without asking again. It's already locked in on each device: *A is the answer right now*.
+ 
+The server is ready to send the next convoy to Lots B and C. But the buses don't look. Lot A is gridlocked at the entrance while B and C sit empty.
+ 
+The server distributed correctly. The only problem: the buses held onto that answer for ten minutes and never let go. DNS round-robin can control *what* it tells you, but not *how long you'll believe it*.
+ 
+Economist George Akerlof gave this structure a name in his 1970 paper "The Market for Lemons": **Information Asymmetry**. In the used car market, sellers know the condition of the car — buyers don't. That single gap warps the entire market.
+ 
+<div style="text-align: right; margin-top: -0.5rem;">
+  <a href="https://en.wikipedia.org/wiki/The_Market_for_Lemons">Information Asymmetry</a><br />
+</div>
 
-But the navigation app doesn't check with the server every second. Once it gets directions, it trusts them for a fixed window of time. It sets a timer — "this information is valid for 10 minutes" — and doesn't re-query the server until that timer runs out. That's TTL, the expiration date on a piece of information.
-
-This is where the bottleneck forms. Picture a convoy of tour buses rolling in — hundreds of cars in a single column. The moment the lead car receives directions to Lot A, every car behind it copies that information and heads straight there without ever asking the server. The answer "A is the right call right now" is already locked into every device in the convoy.
-
-The server is ready to send the next group to B and C. But no one's asking. Lot A is gridlocked from the entrance, while B and C sit completely empty.
-
-The server distributed traffic correctly. The only problem is that the cars held onto their directions for 10 minutes and never let go. DNS round-robin can decide who gets what information — but it can't control how long they hold onto it.
-
-**DNS round-robin looks like load balancing. In practice, it's just blind rotation.**
+DNS round-robin works the same way. The DNS server knows Server A is overloaded. The client has no way to find out until the TTL expires. The distortion isn't a caching bug. It's a structural information gap.
+ 
+**DNS round-robin looks like distribution. In practice, it's blind rotation.**
 
 <br>
 
-### L4 Load Balancer — Route Without Opening the Packet
+### L4 Load Balancer — Fast by Choice
 
-L4 load balancers follow the same philosophy as the L4 layer from Part 1. They never look inside the packet. They check the destination address (IP) and the door number (port), then decide which server to send it to.
+The L4 load balancer follows the same philosophy we introduced in Part 1. It doesn't open the packet. It reads only the address on the envelope — IP address and port number — and decides where to send it.
 
 ```
 [Transport Layer]
@@ -87,56 +95,60 @@ L4 load balancers follow the same philosophy as the L4 layer from Part 1. They n
       │         L4 Load Balancer        │
       │                                 │
       │         ✓ IP address            │
-      │         ✓ Port number           │
-      │ ✗ Packet content (never opened) │
+      │       ✓ Check Port number       │
+      │        ✗ Packet content         │
       └─────────────────────────────────┘    
         ↙             ↓             ↘
   ┌───────────┐ ┌───────────┐ ┌───────────┐
   │ Server A  │ │ Server B  │ │ Server C  │
   └───────────┘ └───────────┘ └───────────┘      
-( Distributed by IP hash or least connections )        
+  ( Based on IP hash or least connections )        
 ```
 
-Not reading the content means processing is fast. It can handle millions of concurrent connections. Game servers — where thousands of clients are holding simple TCP connections simultaneously — are a natural fit.
-
-The trade-off is clear. Because L4 never opens the packet, it can't route based on what's inside. Sending `/api/payments` to the payments server and `/api/products` to the product server isn't possible at L4. It doesn't know the difference.
+No content reading means fast processing. Millions of concurrent connections. Ideal for environments like game servers where massive numbers of clients open simple TCP connections simultaneously. It doesn't need to know what game is being played. It just keeps handling connections.
+ 
+Conway's Law from Network Part 1 — **intentional ignorance** — operates here too. L4 isn't uninformed. It chose not to look. That trade-off buys speed. But it also pays the price of information asymmetry. If it can't see what's in the packet, it can't know that a payment request should go to the payment server. The less it knows, the simpler its decisions.
+ 
+What L4 can't do: route a specific user to a specific server, or differentiate between `/api/payments` and `/api/products` to send traffic to different backends.
 
 <br>
 
-### L7 Load Balancer — Read the Packet, Then Decide
+### L7 Load Balancer — Informed by Design
 
-L7 load balancers open the packet and read it. HTTP headers, URL paths, cookies, even the request body. They understand what the request is asking for before deciding where to send it.
+The L7 load balancer opens the packet and reads it. HTTP headers, URL path, cookies, even the request body. It's like opening the envelope, reading the letter, and then routing it to the right person.
 
 ```
 [Application Layer]
-
-                       ┌───────────────────┐
-                       │   Client Request  │
-                       └───────────────────┘
-                                 ↓
-            ┌─────────────────────────────────────────┐
-            │         L7 Load Balancer Check          │
-            │                                         │
-            │       ✓ IP address / Port number        │
-            │           ✓ HTTP  method / URL          │
-            │             ✓ Host header               │
-            │        ✓ Cookies / Request Body         │ 
-            └─────────────────────────────────────────┘    
-           ↙                     ↓                  ↘
-  ┌─────────────────┐  ┌──────────────────┐   ┌─────────────┐
-  │  Payment Server │  │  Product Server  │   │ User Server │
-  └─────────────────┘  └──────────────────┘   └─────────────┘   
-                      ( Routed by URL path )
+ 
+              ┌───────────────────┐
+              │   Client Request  │
+              └───────────────────┘
+                        ↓
+            ┌────────────────────────┐
+            │    L7 Load Balancer    │
+            │                        │
+            │  ✓ IP address / port   │
+            │  ✓ HTTP method / URL   │
+            │  ✓ Host header         │
+            │  ✓ Cookies / body      │
+            └────────────────────────┘
+          ↙             ↓             ↘
+    ┌───────────┐  ┌──────────┐   ┌──────────┐
+    │  Payment  │  │  Product │   │   User   │
+    │  Server   │  │  Server  │   │  Server  │
+    └───────────┘  └──────────┘   └──────────┘
+               Routing based on URL path
 ```
 
-Reading the URL means `/api/payments` goes to the payments server and `/api/products` goes to the product server. Reading cookies makes **Session Persistence** possible. 
-If a user's shopping cart is stored on Server A, that user needs to keep hitting Server A — otherwise the cart disappears. L7 reads the user ID from the cookie and routes every subsequent request from that user to the same server.
-
-The cost is structural. Every request has to be parsed and interpreted before it can be routed. That overhead is higher than L4 by design. As traffic scales, the cost compounds.
+Reading the URL means `/api/payments` goes to the payment server and `/api/products` goes to the product server. Reading cookies makes **Session Persistence** possible. If a user's shopping cart is stored on Server A, they need to keep landing on Server A. L7 reads the user ID from the cookie and routes them there every time.
+ 
+In Network Part 2, Oliver Williamson's Transaction Cost Theory said: acquiring information always has a cost. L7 is the side that willingly pays it. Opening the packet, parsing the headers, interpreting the URL — all of it is a transaction cost paid to obtain information. In return, it makes decisions L4 never could.
+ 
+The downside: reading takes time. Parsing and interpreting every request is structurally more expensive than L4. As traffic grows, those costs compound.
 
 <br>
 
-### L4 vs L7 — The Bottleneck Tells You Which One to Use
+### L4 vs L7 — Where the Bottleneck Is
 
 <table style="width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;">
   <thead>
@@ -181,9 +193,9 @@ The cost is structural. Every request has to be parsed and interpreted before it
   </tbody>
 </table>
 
-This is where Goldratt's Theory of Constraints — first introduced in Part 1 — applies directly. The constraint isn't always the same. **It depends on where the system is closest to 100% saturation.** The same principle that told us which OSI layer was bottlenecked now tells us which load balancer to reach for.
+This is where Goldratt's Theory of Constraints — first introduced in Network Part 1 — applies directly. The constraint isn't always the same. **It depends on where the system is closest to 100% saturation.** The same principle that told us which OSI layer was bottlenecked now tells us which load balancer to reach for.
 
-If concurrent connections are approaching the ceiling, L4. If requests need to be routed based on their content, L7. In practice, many production systems run both in layers — L4 takes the initial traffic and splits it into server groups, L7 handles fine-grained routing within each group.
+If concurrent connection count is approaching its ceiling, use L4. If requests need different handling based on their content, use L7. In practice, many systems use both in layers. L4 takes traffic first and splits it into server groups; L7 handles fine-grained routing within those groups.
 
 <div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.haproxy.com/blog/layer-4-and-layer-7-proxy-mode">HAProxy Blog: Layer 4 and Layer 7 Proxy Mode</a>
@@ -191,37 +203,43 @@ If concurrent connections are approaching the ceiling, L4. If requests need to b
 
 <br>
 
-### Risk Pooling — Where You Split Determines the Cost
+### The Cost of Reading vs. The Cost of Not Knowing
 
-Supply chain management has a concept called **Risk Pooling**. Whether you consolidate inventory in one warehouse or spread it across multiple regional locations changes the total cost of your operation.
-
-A centralized warehouse handles all orders from one location. Inventory management is simple. Demand spikes anywhere can be absorbed by the same pool. But a customer in Miami ordering from a warehouse in Chicago waits an extra day. Efficient to manage, slow to respond.
-
-Regional warehouses flip the trade-off. A customer in Miami gets same-day delivery from a local facility. Fast. But each warehouse needs its own inventory, its own staff, its own operations. If the Miami warehouse runs out of stock, restocking from Atlanta isn't instant. Fast, but expensive.
-
-Load balancers follow the same logic. **Where you split the traffic determines the latency cost.**
-
-L4 is closer to the centralized model. Everything routes through one fast layer without reading the contents. Throughput is unmatched, but content-based decisions aren't possible. Fast, but coarse.
-
-L7 is closer to the regional model. Every request gets read and sent to the right destination. Precise, but every read costs time. Accurate, but slower.
-
-There's no universal answer. It depends on what you're building.
-
-A game server handling tens of thousands of simultaneous players needs every connection it can get. There's no time to open packets. L4 is the answer. A microservices platform where a misrouted payment request breaks the entire checkout flow needs precision. Reading the URL and routing correctly is worth the overhead. L7 is the answer.
-
-Speed first, or accuracy first. That's the question L4 and L7 are each answering.
-
+Supply chain management has a theory called **Risk Pooling** — the idea that where you hold inventory determines not just logistics cost, but how quickly you can respond when demand shifts.
+ 
 <div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://hbr.org/1994/11/from-supply-chain-to-value-chain">HBR: Supply Chain Management and Risk Pooling</a>
 </div>
+
+A centralized warehouse is simple to manage. Demand forecasting is easier. If one region spikes, you pull from inventory elsewhere. The downside: a customer in Busan waits an extra day for a shipment leaving Seoul. Efficient to manage, slow to respond.
+ 
+A distributed warehouse reverses that. The Busan warehouse ships to Busan customers same day. Fast, but each location carries its own inventory, raising operating costs. When one runs dry, restocking from another isn't instant.
+ 
+**Where you split determines latency (logistics cost).** That's the first question Risk Pooling asks.
+ 
+But warehouse location is only half of it. How much the person running the warehouse knows about each order also changes outcomes.
+ 
+A sorting worker at a central distribution center reads the barcode on the outside of the box and pushes it through. Whether the contents are glassware or fresh produce doesn't matter. The entire job is maximizing Throughput — and every detail beyond destination is noise to be discarded.
+ 
+The regional warehouse manager works differently. They open the shipping manifest. Urgent order — call a courier. Cold chain item — reroute to a refrigerated vehicle. They pay with time (Latency) to read the information. In return, they avoid the expensive mistakes: wrong vehicle, damaged goods, missed priority flags.
+ 
+Akerlof's Information Asymmetry operates here. The side with information and the side without it make different decisions. **No information means simple decisions. More information means more precise decisions. And acquiring information always carries a cost.**
+ 
+Overlay the two theories and the question splits into two layers.
+ 
+**Where to split** — Risk Pooling answers this. Bottleneck in connection count: use L4. Bottleneck in routing accuracy: use L7.
+ 
+**Whether to read** — Information Asymmetry answers this. When the cost of acquiring information (parsing overhead) is less than the cost of acting without it (wrong routing), L7 is the rational choice. When it isn't, L4 is.
+ 
+This is the same structure we've been tracing since Part 1. Goldratt asked where the constraint is. Coase and Williamson asked under what conditions it's worth paying the transaction cost. Akerlof showed how the gap in information splits behavior. Four parts, different names, same question: **where is the bottleneck right now, and what are you willing to give up to clear it?**
 
 <br>
 
 ### The Bottom Line
 
-DNS round-robin assigns turns without knowing server state. L4 routes without opening the packet. L7 reads before routing. Each approach makes a different call on where to absorb the cost — and none of them is universally right.
+DNS round-robin assigns turns without knowing server state. Information asymmetry warps the distribution. L4 gives up information and gains speed. L7 acquires information and gains precision. Each is a different answer to the same question: where do you absorb the cost?
 
-Choosing where to split traffic isn't a technical decision. It's a trade-off decision. The same question this series has been asking since Part 1: where is the constraint, and what are you willing to give up to resolve it?
+Choosing which layer to split traffic at isn't a technical decision. It's a trade-off decision.
 
 **Know where the bottleneck is, and you'll know where to split.**
 
