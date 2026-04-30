@@ -9,20 +9,28 @@ date: 2026-04-13
 <p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: April 13, 2026</p>
 
 
-> TCP's approach to reliability is straightforward: establish a contract before sending anything. But have you ever stopped to think about how expensive that contract actually is?
+> Picture a ticket drop. Tens of thousands of people clicking at the same moment. The server collapses — before a single byte of real data has moved. That's the strange part. Nothing was actually exchanged yet. So what wore the server out?
 >
-> Picture a flash sale. The moment thousands of users click that button, the server has something to do before it can process a single request — negotiate a connection with each one of them. Signals go back and forth. Readiness gets confirmed. Only then does real data start moving. Under load, the server isn't buried in data. It's buried under a mountain of contract negotiations.
+> There's work that has to happen before the data can flow. Until that work is done, the transaction hasn't started. It can't.
 
 <br>
 <br>
 
-This is how TCP earns its reliability. And that reliability always comes at a price.
+Every transaction has a setup cost. Verifying the other party. Aligning on terms. Confirming readiness on both sides. The more a transaction depends on trust, the more that setup costs.
+
+Networks are no different. Before data can move reliably, both sides have to establish a shared understanding — that packets will arrive, that order will be preserved, that nothing will go missing without a response. None of that is free. It takes time. And that time adds up faster than most people expect.
 
 <br>
 
-### How TCP Establishes a Connection
+### TCP's Call — Contract Before Data
 
-TCP guarantees delivery. It reassembles out-of-order packets and retransmits anything lost in transit. But all of that reliability hinges on one prerequisite: both sides must confirm their readiness before a single byte of data moves.
+TCP made a deliberate choice: **no data moves until a contract is in place.**
+
+Both sides exchange signals to confirm they're ready. Until that exchange completes, not a single byte of actual payload is transmitted. The entire window is spent on process. On paperwork.
+
+That's the handshake. Trust purchased at the cost of speed.
+
+The deeper problem is that this contract doesn't carry over. Every new connection starts from scratch. One user, one handshake — manageable. Ten thousand users hitting the server simultaneously — the setup cost alone is enough to bring it down, before the real work has even begun.
 
 ```
 Client                            Server
@@ -36,29 +44,25 @@ Client                            Server
   |       [ Data transfer ]         |
 ```
 
-Three signals have to complete before data can move. What's important here is that throughout this entire exchange, not a single byte of actual payload — the data you actually wanted to send — has been transmitted. Every millisecond spent so far has gone purely toward establishing the connection itself. That's the procedural cost of reliability.
-
+Three signals. Only then does data flow. SYN and SYN-ACK are the negotiation. ACK is the signature. The actual transaction — the data — doesn't start until all three are done.
 
 <br>
 
+### The Bill Comes Twice
 
-### What Happens Between the Three Signatures
+**Opening the connection — RTT**
 
-**RTT — Distance becomes cost**
+The time it takes to complete the handshake is tied to physical distance. Seoul to a US server: roughly 150ms per round trip. That's RTT — Round Trip Time.
 
-The time it takes to send a SYN and receive a SYN-ACK back is called RTT — Round Trip Time. Seoul to a US-based server sits around 150ms RTT.
+TCP needs at least 1.5 round trips before the server receives the first byte of data. From the moment a user clicks to the moment the server registers what was sent: <strong>225ms (150ms × 1.5)</strong> is already gone.
 
-A TCP handshake takes 1.5 round trips before the server can begin processing your actual data — 0.5 RTT for SYN, 0.5 for SYN-ACK, and 0.5 for the first data packet to arrive. On a Seoul-to-US connection with ~150ms RTT, that means <Strong>225ms (150ms × 1.5)</Strong> has already evaporated before a single byte of your request is processed.
+One request, 225ms. Ten thousand concurrent users, ten thousand instances of that cost. No amount of server-side optimization touches it. RTT is a fixed cost — locked to physics, not infrastructure.
 
-One request, 225ms. Ten thousand concurrent users means that cost runs 10,000 times simultaneously. This isn't a hardware problem — it's a fixed cost of the protocol.
+**Closing the connection — TIME_WAIT**
 
+The bill doesn't stop when the connection ends. TCP holds a closed port in TIME_WAIT for up to two minutes. The reason is defensive: late-arriving packets from the old connection shouldn't collide with a new one using the same port.
 
-**TIME_WAIT — Closed connections still hold their spot**
-
-When a connection closes, the port doesn't immediately free up. TCP holds terminated connections in a TIME_WAIT state for up to two minutes—a safeguard against late-arriving packets colliding with new connections.
-
-In Network Part 1, we established that a server has roughly 28,000 usable ports. Now, picture a high-traffic server closing 500 connections per second. To sustain this, you would need 60,000 available ports (500/s × 120s) just to handle the queue of closing connections. Since we only have 28,000, the server hits a wall long before the first minute is even up. New connections have nowhere to go—the system has run out of breath.
-
+From Part 1: roughly 28,000 ports are available. A server handling 500 connections per second will accumulate 60,000 TIME_WAIT ports (500/s × 120s) before the two-minute window clears. That's more than double the limit. New connections stop being possible.
 
 ```
 After connection closes:
@@ -72,7 +76,7 @@ Port 5028  [TIME_WAIT ——————————— 2 min ——————
 → 28,000 ports exhausted. No new connections accepted.
 ```
 
-RTT is the cost of opening a connection. TIME_WAIT is the cost of closing one. Under high-volume traffic, TCP charges at both ends.
+RTT is the cost of opening. TIME_WAIT is the cost of closing. TCP charges on both ends.
 
 <div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.cloudflare.com/learning/cdn/glossary/round-trip-time-rtt/">Cloudflare Learning: What is round-trip time?</a><br>
@@ -81,28 +85,28 @@ RTT is the cost of opening a connection. TIME_WAIT is the cost of closing one. U
 
 <br>
 
-### The Cost of Making a Deal
+### Transaction Cost Theory and Keep-Alive
 
-In 1937, economist Ronald Coase asked a deceptively simple question: Why don't market transactions happen frictionlessly? His answer: Every transaction carries "preparation costs." Finding a counterparty, negotiating terms, and formalizing an agreement—the process itself has a price. Oliver Williamson later formalized this as Transaction Cost Theory.
-
-The TCP handshake is this theory expressed in network architecture. Before any data moves, both sides must enter a binding contract. SYN and SYN-ACK are the negotiation; ACK is the final signature. The actual transaction—data transfer—only begins after all three steps are complete.
-
-Transaction Cost Theory's core insight is simple: <Strong>the most effective way to reduce transaction costs is to reduce the number of transactions.</Strong> Instead of renegotiating a new contract for every exchange, you keep one contract alive and reuse it as much as possible.
-
-That is precisely the logic behind HTTP Keep-Alive. Rather than paying the "handshake tax" for every single request, it keeps the connection open across multiple requests—amortizing the setup cost across dozens of exchanges.
-
-However, Keep-Alive alone wasn't a silver bullet. HTTP still faced structural limitations—like the "Head-of-Line Blocking" problem—that prevented it from being truly efficient. In Part 3, we'll look at how the protocol had to evolve further to overcome these remaining frictions.
+In 1937, Ronald Coase famously asked why markets aren't frictionless. His answer was simple: every transaction demands a hidden tax—the cost of searching for partners, negotiating terms, and signing contracts. TCP is a network implementation of that idea. Every connection comes with a negotiation fee. And Transaction Cost Theory points to exactly one solution.
 
 <div style="text-align: right; margin-top: -0.5rem;">
   <a href="https://www.ubs.com/microsites/nobel-perspectives/en/laureates/oliver-williamson.html">UBS Nobel Perspectives: Oliver Williamson — Transaction Cost Theory</a>
 </div>
 
+**The most effective way to reduce transaction costs is to reduce the number of transactions.**
+
+Not faster contracts — fewer contracts. That's the logic behind HTTP Keep-Alive. Instead of opening and closing a connection for every request, Keep-Alive holds the connection open across multiple requests. The handshake cost gets distributed — not paid once per request, but once per session.
+
+Keep-Alive solved the contract problem. But it didn't solve everything. Even inside a persistent connection, there was still a hard rule: requests had to be handled in the order they arrived. Fix the negotiation fee, and suddenly the queue itself becomes the bottleneck.
+
+That's where the next part picks up.
+
 <br>
 
 ### The Bottom Line
 
-TCP's handshake is the price of reliability. RTT is what you pay to open a connection. TIME_WAIT is what you pay after closing one. In the language of Transaction Cost Theory, TCP is a protocol that charges a negotiation fee on every single connection.
+The TCP handshake is the price of trust. RTT is what you pay to open a connection. TIME_WAIT is what you owe after closing one. In the language of Transaction Cost Theory, TCP is a protocol that charges a negotiation fee on every single connection.
 
-**The goal isn't to make connections faster. It's to make fewer of them. That's the direction HTTP has been moving ever since.**
+**The optimization insight isn't "connect faster." It's "connect less." HTTP has been moving in that direction ever since.**
 
-Next up: how HTTP/1.1 introduced Keep-Alive to soften the blow, how HTTP/2 took it further with multiplexing, and why HTTP/3 made the most radical call of all — ditching TCP entirely.
+Next up: HTTP/1.1 solved the connection frequency problem with Keep-Alive. Then it ran into a different wall. One queue, no passing. Fix the engine — and suddenly the road is one lane.
