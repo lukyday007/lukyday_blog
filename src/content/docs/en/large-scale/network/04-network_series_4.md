@@ -1,5 +1,5 @@
 ---
-title: Network Part 4 - Where to Split, Why to Read?
+title: NetNetwork Part 4 - Load Balancers, Separating Traffic by Information
 description: From the limits of DNS round-robin to the trade-offs of L4/L7 load balancers — where you split traffic determines what your system can and cannot do.
 sidebar:
   order: 5
