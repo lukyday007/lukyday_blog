@@ -1,5 +1,5 @@
 ---
-title: NetNetwork Part 4 - Load Balancers, Separating Traffic by Information
+title: NetNetwork Part 4 - The Load Balancer as a Traffic Information Decision
 description: From the limits of DNS round-robin to the trade-offs of L4/L7 load balancers — where you split traffic determines what your system can and cannot do.
 sidebar:
   order: 5
