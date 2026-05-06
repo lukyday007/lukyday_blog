@@ -85,7 +85,7 @@ Client
 
 *제약 이론(TOC)* 핵심: **서로 다른 계층에서 두 개의 제약이 동시에 발생할 때, 해법 또한 입체적이어야 한다. 하나만 해결하고 나머지를 방치하면, 병목은 사라지는 것이 아니라 다른 계층으로 옮겨갈 뿐이다.**
 
-<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>TCP 핸드셰이크 비용, RTT, Keep-Alive</em> → 네트워크 2편<br>
   <em>Head-of-Line Blocking, 멀티플렉싱</em> → 네트워크 3편<br>
   <em>제약 이론(TOC)</em> → 네트워크 1편
@@ -200,7 +200,7 @@ Client                           Server
 
 *제약 이론(TOC)* 은 여기서도 유효하다. **어느 자원이 먼저 포화되는지 — 메시지 처리량인지 연결 수인지 — 를 찾고, 그에 맞춰 선택하라.**
 
-<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>거래비용이론, TCP 핸드셰이크, Keep-Alive, TIME_WAIT</em> → 네트워크 2편<br>
   <em>L4 포트 한계(28,000개)</em> → 네트워크 1편<br>
   <em>제약 이론(TOC)</em> → 네트워크 1편
@@ -277,7 +277,7 @@ CDN은 이미지와 파일을 캐싱하는 데 그치지만, 엣지 서버(Edge 
 
 *정보 비대칭*의 관점에서 보면, 라우팅의 효율은 **클라이언트의 위치를 얼마나 정확히 알고 있느냐**에 결정된다. DNS가 사용자의 위치를 모른 채(정보 부재) IP를 무작위로 배분하면 지리적 비용이 치솟지만, 이 정보의 격차를 메우면 최적의 경로를 찾아낼 수 있다. 정보를 무시하고 내린 결정의 대가는 결국 지리적 한계가 만드는 속도 저하로 나타난다.
 
-<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>RTT</em> → 네트워크 2편<br>
   <em>DNS 라운드 로빈, 정보 비대칭</em> → 네트워크 4편
 </div>
@@ -329,7 +329,7 @@ Client                        Server
 
 *거래비용이론*을 대입해 보면 명확해진다. **TCP의 계약은 L4까지만 유효하다. L7에서의 실행을 완벽히 보장하려면 별도의 추가 계약이 필요하며, 멱등성 키는 바로 그 계약을 유지하기 위해 지불하는 비용이다.**
 
-<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>TCP 핸드셰이크, TCP의 신뢰 비용</em> → 네트워크 2편
 </div>
 <div style="text-align: right; margin-top: -0.5rem;">
