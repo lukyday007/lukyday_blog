@@ -87,7 +87,7 @@ If content is dynamic and users are concentrated in a single region, CDN adds li
 
 *Theory of Constraints (TOC)*, applied: **when two constraints sit on different layers, the fix must address both. Solving one while ignoring the other moves the bottleneck — it doesn't remove it.**
 
-<div style="text-align: right; margin-top: -0.5rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>TCP handshake cost, RTT, Keep-Alive</em> → Network Part 2<br>
   <em>Head-of-Line Blocking, multiplexing</em> → Network Part 3<br>
   <em>Theory of Constraints (TOC)</em> → Network Part 1
@@ -208,7 +208,7 @@ If the bottleneck is connection count (millions of users, infrequent updates), S
 
 *Theory of Constraints (TOC)*, applied: **find which resource saturates first — message throughput or connection count — and choose accordingly.**
 
-<div style="text-align: right; margin-top: -0.5rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>Transaction Cost Theory, TCP handshake, Keep-Alive, TIME_WAIT</em> → Network Part 2<br>
   <em>L4 port limit (28,000)</em> → Network Part 1<br>
   <em>Theory of Constraints (TOC)</em> → Network Part 1
@@ -282,7 +282,7 @@ If traffic fits comfortably in a single region, it only adds operational complex
 
 *Information Asymmetry*, applied: **the routing decision is only as good as the information it has. Close the gap, and the cost drops. Ignore it, and geography wins by default.**
 
-<div style="text-align: right; margin-top: -0.5rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>RTT</em> → Network Part 2<br>
   <em>DNS round-robin, Information Asymmetry</em> → Network Part 4
 </div>
@@ -337,7 +337,7 @@ Any write operation where network retries can occur — payments, orders, reserv
 *Transaction Cost Theory*, applied: **TCP's contract covers L4. Guaranteeing execution at L7 requires a separate contract — and the idempotency key is that contract's cost.**
 
 
-<div style="text-align: right; margin-top: -0.5rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
+<div style="text-align: right; margin-top: -1.0rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
   <em>TCP handshake, TCP's trust cost</em> → Network Part 2
 </div>
 <div style="text-align: right; margin-top: -0.5rem;">
