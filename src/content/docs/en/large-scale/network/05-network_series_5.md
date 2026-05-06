@@ -1,5 +1,5 @@
 ---
-title: Network Part 5 - CDN, WebSocket, and Idempotency: When the Parts Meet Traffic
+title: "Network Part 5 - CDN, WebSocket, and Idempotency: When the Parts Meet Traffic"
 description: Four real scenarios — image loading, real-time chat, global routing, and payment retries — where Parts 1–4 stop being theory and start being architecture decisions.
 sidebar:
   order: 6
