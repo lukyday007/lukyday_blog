@@ -18,9 +18,7 @@ Both incidents share one thing: it took far too long to find the cause. Because 
 
 The OSI model is not a taxonomy for networking textbooks. **It's a fault map — a way to pinpoint exactly where a system breaks.**
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/">Cloudflare Blog: Cloudflare outage on June 21, 2022</a>
-</div>
+*Reference: [Cloudflare Blog: Cloudflare outage on June 21, 2022](https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/)*
 
 <br>
 
@@ -43,9 +41,7 @@ That's why the Cloudflare outage could be called "a Layer 3 problem" immediately
 
 **Each layer chose not to know the others. That's exactly what makes it possible to know which layer broke.**
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://martinfowler.com/bliki/ConwaysLaw.html">Martin Fowler: Conway's Law</a>
-</div>
+*Reference: [Martin Fowler: Conway's Law](https://martinfowler.com/bliki/ConwaysLaw.html)*
 
 <br>
 
@@ -86,14 +82,13 @@ L3  [█████░░░░░░░░░]  Routing overhead
 L1  [███░░░░░░░░░░░]  Throughput saturation  ← when this goes, everything goes
 ```
 
-L7 hits the wall first. L1 going down means nothing gets through at all. Under high-volume load, there's only one question that matters: **which layer is closest to 100% Saturation right now?**
+L7 tends to be the primary bottleneck, whereas L1 failure represents a fundamental system collapse. Under high-volume load, there's only one question that matters: **at which layer has saturation reached 100%?**
 
 *How to resolve L4 and L7 bottlenecks in practice — that's Part 4 (Load Balancers).*
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE Book: Monitoring Distributed Systems</a><br>
-  <a href="https://www.rfc-editor.org/rfc/rfc793">RFC 793: Transmission Control Protocol</a>
-</div>
+*Reference: [Google SRE Book: Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/)* <br>
+*Reference: [RFC 793: Transmission Control Protocol](https://www.rfc-editor.org/rfc/rfc793)*
+
 
 <br>
 

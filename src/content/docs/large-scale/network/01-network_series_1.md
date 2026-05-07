@@ -18,9 +18,7 @@ date: 2026-03-27
 
 OSI 7계층은 통신 교과서에 나오는 암기 항목이 아니다. **장애가 발생했을 때 어느 계층에서 터졌는지 짚어내는 진단 지도다.**
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/">Cloudflare Blog: Cloudflare outage on June 21, 2022</a>
-</div>
+*Reference: [Cloudflare Blog: Cloudflare outage on June 21, 2022](https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/)*
 
 <br>
 
@@ -43,9 +41,7 @@ Cloudflare 장애를 분석할 때 "L3 문제"라고 바로 특정할 수 있었
 
 **각 계층이 서로를 모르기로 선택했기 때문에, 우리는 어느 계층이 문제인지 알 수 있다.**
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://martinfowler.com/bliki/ConwaysLaw.html">Martin Fowler: Conway's Law</a>
-</div>
+*Reference: [Martin Fowler: Conway's Law](https://martinfowler.com/bliki/ConwaysLaw.html)*
 
 <br>
 
@@ -86,14 +82,13 @@ L4는 모르는 대신 빠르고, L7은 아는 대신 느리다. 둘 다 틀린 
     L1  [███░░░░░░░░░░░]  Throughput 포화    ← 터지면 전부 끝
 ```
 
-L7이 가장 먼저 벽에 부딪힌다. L1이 터지면 아무것도 통과하지 못한다. 결국 장애 대응의 첫 질문은 하나로 좁혀진다. **지금 어느 계층의 Saturation이 100%에 가까워지고 있는가.**
-
+L7이 가장 먼저 한계에 부딪힌다. 반면 L1이 무너지는 것은 아예 길이 끊겨 아무것도 통과하지 못하는 상태를 의미한다. 대규모 트래픽이 몰리는 상황에서 장애 대응의 핵심 질문은 결국 하나로 좁혀진다. "지금 어느 계층의 Saturation(포화도)이 100%에 근접했는가?"
 *L4와 L7 병목을 실제로 어떻게 해소하는지는 4편(로드 밸런서)에서 다룬다.*
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE Book: Monitoring Distributed Systems</a><br>
-  <a href="https://www.rfc-editor.org/rfc/rfc793">RFC 793: Transmission Control Protocol</a>
-</div>
+*Reference: [Google SRE Book: Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/)* <br>
+*Reference: [RFC 793: Transmission Control Protocol](https://www.rfc-editor.org/rfc/rfc793)*
+
+
 
 <br>
 
