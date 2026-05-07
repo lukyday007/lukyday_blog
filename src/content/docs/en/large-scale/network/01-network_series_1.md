@@ -18,6 +18,7 @@ The OSI model is not a taxonomy for networking textbooks. **It's a fault map —
 
 *Reference: [Cloudflare Blog: Cloudflare outage on June 21, 2022](https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/)*
 
+<br>
 
 ### Why the Layers Don't Talk to Each Other
 
@@ -39,6 +40,7 @@ That's why the Cloudflare outage could be called "a Layer 3 problem" immediately
 
 *Reference: [Martin Fowler: Conway's Law](https://martinfowler.com/bliki/ConwaysLaw.html)*
 
+<br>
 
 ### Every Layer Has Its Own Breaking Point
 
@@ -81,6 +83,7 @@ L7 tends to be the primary bottleneck, whereas L1 failure represents a fundament
 *Reference: [Google SRE Book: Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/)* <br>
 *Reference: [RFC 793: Transmission Control Protocol](https://www.rfc-editor.org/rfc/rfc793)*
 
+<br>
 
 ### The Bottom Line
 
