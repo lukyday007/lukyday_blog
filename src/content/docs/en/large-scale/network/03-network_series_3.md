@@ -1,5 +1,5 @@
 ---
-title: Network Part 3 - The Evolution of HTTP and the Cost of Every Trade-off
+title: Network Part 3 - How HTTP Outgrew TCP
 description: From HOL Blocking to QUIC — how HTTP/1.1, HTTP/2, and HTTP/3 each made a different call on what to keep and what to let go, read through Path Dependency and the Innovator's Dilemma.
 sidebar:
   order: 4
