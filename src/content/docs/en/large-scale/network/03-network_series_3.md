@@ -8,48 +8,55 @@ date: 2026-04-25
 
 <p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: April 25, 2026</p>
 
-> When the past answer becomes the present problem, we call it Path Dependency. TCP was designed in 1981. It solved the right problems for its time. By the time HTTP was carrying the modern web, that 40-year-old foundation was starting to show its age.
+> HTTP/2 arrived in 2015 to resolve the queuing issues of its predecessor. It introduced a significant technical shift by interleaving multiple requests into a single connection. Yet, real-world performance showed an unexpected result. On networks with 2% packet loss, HTTP/1.1 actually outperformed the newer protocol. **The server and the application code remained identical, but the technically superior protocol failed to deliver.**
 >
-> Keep-Alive solved the contract problem. One connection, many requests. Cheaper by design. But the queue was still single-file. Fix the engine, and suddenly the road is the problem. That road was TCP.
+> The fault did not lie within HTTP/2 itself but in the layer beneath it. TCP, a protocol designed in 1981, still controlled the data flow. While multiplexing allowed more data to move at the application layer, TCP continued to enforce strict ordering. This meant a single lost packet could stall the entire connection until it was recovered.
+
+*Reference: [TCP Head-of-Line Blocking — http3-explained](https://http3-explained.haxx.se/en/why-quic/why-tcphol)*  
 
 <br>
 <br>
 
-### HTTP/1.1 — One Lane, No Exceptions
+Keep-Alive reduced the cost of establishing connections by allowing one connection to handle many requests. However, the delivery queue remained single-file. Improving the application protocol only revealed a deeper bottleneck in the transport layer. That bottleneck was TCP.
 
-HTTP/1.1 had one rigid rule: one connection handles one request at a time, in order.
+## HTTP/1.1 — One Lane, No Exceptions
 
-Keep-Alive meant you didn't have to renegotiate a new contract for every exchange. But the delivery itself was still sequential. One large image delayed at the front of the queue, and every lightweight text file behind it had to wait. The connection was alive — it just couldn't move two things at once. This is **Head-of-Line Blocking (HOLB)**.
+HTTP/1.1 followed a rigid rule where **one connection could only handle one request at a time** in a strict sequence.
 
-Browsers tried to route around it by opening up to six parallel connections per server. But that just brought back the port exhaustion and handshake overhead from Part 2. The problem wasn't solved. It was transferred — into a different form of cost.
+Keep-Alive eliminated the need to renegotiate a new contract for every exchange. But the delivery itself was still sequential. One large image delayed at the front of the queue, and every lightweight text file behind it had to wait. The connection was alive — it just couldn't move two things at once. This is **Head-of-Line Blocking (HOLB)**.
 
-<br>
-
-### HTTP/2 — Same Road, Different Lane
-
-Released in 2015, HTTP/2 attacked HOL Blocking at the application layer with **multiplexing**.
-
-Instead of sending whole files in sequence, HTTP/2 breaks requests and responses into small frames and interleaves them over a single connection. Small payloads can slip through between chunks of a large one. On paper, it looked like true parallel processing.
-
-But TCP was still underneath. And TCP is obsessed with order.
-
-If a single packet is lost in transit, TCP halts everything — including frames from entirely unrelated requests — until that packet is retransmitted and order is restored. HTTP/2 had widened the lanes at the application layer. The transport layer's old rules froze them anyway.
-
-This is Path Dependency in action. **The choice to build HTTP on top of TCP meant every improvement had to work within TCP's constraints.** HTTP/2 was a sustaining innovation — the best possible improvement within the existing system. But it couldn't break the structural ceiling, because the ceiling was TCP itself.
-
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://web.dev/articles/performance-http2">web.dev: HTTP/2</a>
-</div>
+Browsers tried to route around it by opening up to six parallel connections per server. But that just brought back the port exhaustion and handshake overhead from Network Part 2. The core issue wasn't resolved. **The cost was simply transferred into a different form of inefficiency.**
 
 <br>
 
-### HTTP/3 — Cutting the Path
+## HTTP/2 — Same Road, Different Lane
 
-Google made the call. Ditching TCP entirely.
+Released in 2015, HTTP/2 targeted HOL Blocking at the application layer using **multiplexing**.
 
-But this is where a common misconception takes hold. Dropping TCP didn't mean dropping reliability. It meant replacing everything TCP did with something that did it better.
+Instead of sequential file transfers, HTTP/2 breaks data into small frames. It interleaves these frames over a single connection. Small payloads can now slip between chunks of larger ones. On paper, this looked like true parallel processing.
 
-The new foundation is UDP. Unlike TCP, UDP makes no guarantees — no ordering, no retransmission, no reliability. It just fires packets and moves on. Google built QUIC directly on top of that bare foundation — taking on everything TCP used to handle (retransmission, encryption, connection management), but doing it per stream. One stream stalls, the rest keep moving. HOL Blocking, gone at the root.
+However, TCP remained the foundation. And **TCP is obsessed with order**.
+
+If one packet is lost, TCP halts everything. This includes frames from entirely unrelated requests. The connection stalls until that specific packet is retransmitted. HTTP/2 widened the lanes at the application layer, but the transport layer's legacy rules froze them.
+
+The decision to build HTTP on top of TCP meant **every new improvement had to live within TCP’s constraints**. HTTP/2 was the best answer the existing system could provide. It offered wider lanes and smarter framing—every possible gain that could be achieved without abandoning the foundation.
+
+**The ceiling was not the design of HTTP/2. The limitation was the foundation itself.**
+
+A choice made in 1981 was quietly setting the upper bound for the future. Thirty-four years later, that legacy was still dictating the hard borders of what innovation could reach.
+
+*Reference: [web.dev: HTTP/2](https://web.dev/articles/performance-http2)*
+
+
+<br>
+
+## HTTP/3 — Cutting the Path
+
+Google finally made the call to ditch TCP entirely.
+
+There is a common misconception that dropping TCP means losing reliability. In reality, it meant replacing TCP’s legacy functions with a superior system. The new foundation is **UDP**. Unlike TCP, UDP makes no guarantees—no ordering, no retransmission, and no reliability. It simply fires packets and moves on.
+
+Google built **QUIC** directly on top of this bare foundation. QUIC handles everything TCP once did—retransmission, encryption, and connection management—but it does so **per stream**. If one stream stalls, the others keep moving. The root cause of Head-of-Line Blocking is finally eliminated.
 
 ```
 ┌─────────────────┐        ┌─────────────────┐
@@ -63,20 +70,20 @@ The new foundation is UDP. Unlike TCP, UDP makes no guarantees — no ordering, 
 └─────────────────┘        └─────────────────┘
 ```
 
-This is why HTTP/3 is called "UDP-based." QUIC sits on top of UDP, and HTTP/3 runs on top of QUIC. TCP wasn't abandoned — its role was replaced.
+This is why HTTP/3 is described as "UDP-based." QUIC sits on top of UDP, and HTTP/3 runs on top of QUIC. **TCP was not simply abandoned. Its entire role was strategically replaced.**
 
-**Why YouTube and Zoom were already on UDP**
 
-Real-time streaming services made this call long ago. When a packet drops during a video call, waiting for TCP to retransmit it freezes the screen. It's better to skip that moment and move to the next frame. When continuity matters more than completeness, TCP's reliability becomes a liability.
+### Why YouTube and Zoom were already on UDP
 
-QUIC brought that same instinct to general web traffic. A lost packet stalls only the stream it belongs to. Everything else keeps moving.
+Real-time streaming services made this strategic choice long ago. In a video call, waiting for TCP to retransmit a lost packet freezes the screen. It is often better to skip the missing data and move immediately to the next frame. When **continuity matters more than completeness**, TCP’s reliability actually becomes a liability.
 
-**0-RTT — Cutting the cost of security too**
+QUIC brought this same instinct to general web traffic. By handling data per stream, a lost packet only stalls the specific stream it belongs to. Everything else continues to move without interruption. The efficiency of real-time streaming has now become the standard for the broader web.
 
-The 1.5 RTT cost from Part 2 was just the TCP handshake. Add HTTPS, and TLS negotiation stacks on top. One connection, up to 3 RTT before a single byte of data moves.
+### 0-RTT — Cutting the cost of security too
 
-QUIC has TLS 1.3 built in — connection and security negotiation happen simultaneously. Return visits skip the handshake entirely. The 1.5 RTT from Part 2 collapses to zero.
+The 1.5 RTT cost mentioned in Part 2 covered only the TCP handshake. When HTTPS is added, the TLS negotiation must stack on top. This creates a cumulative delay of up to 3 RTT before a single byte of application data moves.
 
+QUIC solves this by integrating TLS 1.3 directly into its transport layer. Connection and security negotiations occur simultaneously instead of in sequence. On return visits, the system can skip the handshake entirely. This collapses the 1.5 RTT delay from Part 2 to zero.
 
 ```
 ┌─────────────────────┬────────────────────┐
@@ -84,72 +91,86 @@ QUIC has TLS 1.3 built in — connection and security negotiation happen simulta
 ├─────────────────────┼────────────────────┤
 │    TCP   1.5 RTT    │ First visit 1 RTT  │
 │    TLS   1.5 RTT    │ Return visit 0RTT  │
-│    ──────────────   │                    │
+│    ─────────────    │                    │
 │    Total  3 RTT     │                    │
 └─────────────────────┴────────────────────┘
 
 ```
 
-The trade-off is real. By abandoning TCP, the application now owns packet loss handling, connection reliability, and security. Simpler to use. Far more complex underneath.
+The trade-off is clear. By abandoning TCP, the application layer assumes full responsibility for packet loss handling, reliability, and security. While this makes the protocol simpler to deploy, the underlying architecture becomes far more complex.
 
-This is what the Innovator's Dilemma calls disruptive innovation. Not an improvement on what existed — a replacement of it.
+There is a difference between improving a system and replacing one. 
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://www.chromium.org/quic/">Chromium: QUIC</a><br>
-  <a href="https://www.rfc-editor.org/rfc/rfc9000">RFC 9000: QUIC</a>
-</div>
+HTTP/2 chose the first path: wider lanes on the same road.
+HTTP/3 chose the second: a new road altogether.
+
+The first path is safer. The second is the only one capable of moving the ceiling.
+
+*Reference: [Chromium: QUIC](https://www.chromium.org/quic/)*  <br>
+*Reference: [RFC 9000: QUIC](https://www.rfc-editor.org/rfc/rfc9000)*
+
 
 <br>
 
-### How the Three Versions Compare
+## How the Three Versions Compare
 ```
 HTTP/1.1  — Requests must wait in line
-time →  t1     t2     t3     t4     t5
-R1     [====] [====]
-R2                   [====] [====]
-R3                                 [====]
+time  →   t1      t2      t3      t4      t5
+R1        [====]  [====]
+R2                        [====]  [====]
+R3                                        [====]
 R2 can't start until R1 finishes. R3 can't start until R2 finishes.
 ──────────────────────────────────────────
 HTTP/2  — One lost packet freezes everything
-time →  t1     t2     t3     t4     t5
-R1      [====] [====] [====]
-R2      [====] ✕ ← packet lost
-R3      [====]        ← waiting...  ← waiting...
+time  →   t1      t2      t3      t4      t5
+R1        [====]  [====]  [====]
+R2        [====]  ✕  ← packet lost
+R3        [====]  ← waiting...  ← waiting...
 When ✕ occurs, R1, R2, and R3 all freeze.
 ──────────────────────────────────────────
 HTTP/3  — Only the affected stream pauses
-time →  t1     t2     t3     t4     t5
-R1      [====] [====] [====] [====]
-R2      [====] ✕ ← packet lost        [retransmit]
-R3      [====] [====] [====] [====] ← keeps moving
+time  →   t1      t2      t3      t4      t5
+R1        [====]  [====]  [====]  [====]
+R2        [====]  ✕ ← packet lost        [retransmit]
+R3        [====]  [====]  [====]  [====] ← keeps moving
 When ✕ occurs, only R2 pauses. R1 and R3 continue.
 ```
-
 
 Each version made a different call on where to absorb the cost.
 
 <br>
 
-### Path Dependency and the Innovator's Dilemma
 
-The evolution of HTTP is a case study in two management concepts that explain why the right answer takes so long to arrive.
+## Path Dependency and the Innovator's Dilemma
 
-**Path Dependency.** Every router and firewall on the internet was optimized for TCP. Even when better alternatives existed, leaving TCP behind wasn't just a technical decision — it was an infrastructure negotiation with the entire global network. A choice made in 1981 constrained technical decisions well into the 2020s.
+Throughout this evolution, two invisible patterns have dictated the pace of progress. The first is a legacy decision from decades ago that continued to set a rigid ceiling for every new layer built above it. The second is the inevitable moment where incremental improvements lose their efficacy, forcing a total replacement of the system itself.
 
-**The Innovator's Dilemma.** HTTP/1.1 to HTTP/2 was sustaining innovation — improving performance while staying within the existing system. Safe, but structurally limited. HTTP/3 was disruptive innovation — abandoning the standard entirely and rebuilding on a new foundation. Risky, but the only way to break the ceiling.
+These patterns have specific names in the world of management.
 
-Where the two concepts meet is HTTP/3 itself. Path Dependency explains why it took 40 years. The Innovator's Dilemma explains why it had to happen at all.
+### Path Dependency
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=46">Clayton Christensen: The Innovator's Dilemma</a>
-</div>
+For decades, every router and firewall on the internet was optimized exclusively for TCP. Even when superior alternatives emerged, abandoning TCP was not merely a technical choice. It was a complex infrastructure negotiation with the entire global network. 
+
+A single architectural decision made in 1981 effectively constrained technical innovation well into the 2020s. This is **Path Dependency** in its purest form, where legacy systems dictate the boundaries of future progress.
+
+### The Innovator's Dilemma
+
+The transition from HTTP/1.1 to HTTP/2 represents **sustaining innovation**. It focused on improving performance while carefully remaining within the established rules of the existing system. This approach was safe but structurally limited.
+
+In contrast, HTTP/3 is a **disruptive innovation**. It abandoned the standard entirely to rebuild on a new foundation. While this shift was inherently risky, it was the only way to break through the structural ceiling that TCP had imposed.
+
+The intersection of these two concepts defines the current state of the web. Path Dependency explains why this evolution took forty years to materialize. The Innovator’s Dilemma explains why such a radical shift had to happen to move the industry forward.
+
+*Reference: [Clayton Christensen: The Innovator's Dilemma](https://www.hbs.edu/faculty/Pages/item.aspx?num=46)*
+
 
 <br>
 
-### The Bottom Line
 
-HTTP/1.1 trimmed the negotiation fee. HTTP/2 increased the transaction density. HTTP/3 rejected the legacy constraints entirely to win back speed. The evolution of protocols isn't a search for the right answer. It's a history of choosing the best trade-off for the era.
+## The Bottom Line
 
-**Improve along the path, or change the path itself. That question doesn't only apply to protocols.**
+HTTP/1.1 trimmed the negotiation fee. HTTP/2 increased the transaction density. Finally, HTTP/3 rejected legacy constraints entirely to recover lost speed. The evolution of protocols is not a simple search for the "right" answer. It is a history of choosing the optimal trade-off for each era.
 
-Next up: even with HTTP/3 handling requests efficiently, traffic still has to land somewhere. When tens of thousands of requests arrive at once, something has to decide where they go. That's the load balancer — and the choice between L4 and L7 turns out to be another trade-off worth understanding.
+**Improve along the existing path, or change the path itself. This strategic question applies to far more than just protocols.**
+
+Next up: even with HTTP/3 handling requests efficiently, traffic must still land somewhere. When tens of thousands of requests arrive simultaneously, a decision must be made on where they go. This is the role of the load balancer. The choice between L4 and L7 turns out to be another critical trade-off worth understanding.
