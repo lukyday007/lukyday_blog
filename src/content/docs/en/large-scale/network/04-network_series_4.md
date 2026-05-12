@@ -171,7 +171,7 @@ Three systems face the same problem but provide three different answers.
 
 DNS round-robin fails because of a huge gap. There is a gap between the server state and the client's judgment. Economist George Akerlof called this **Information Asymmetry** in his paper "The Market for Lemons." In the used car market, sellers know the defects but buyers do not. This gap distorts the entire market. Network distribution breaks down the same way. The server is dying, but the client does not know it.
 
-*Reference: [Information Asymmetry](https://en.wikipedia.org/wiki/The_Market_for_Lemons/)*
+*Reference: [Information Asymmetry](https://en.wikipedia.org/wiki/The_Market_for_Lemons)*
 
 The history of load balancing is about choosing how to handle this asymmetry.
 
