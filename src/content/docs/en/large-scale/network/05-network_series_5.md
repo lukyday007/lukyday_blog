@@ -8,41 +8,42 @@ date: 2026-05-06
 
 <p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: May 6, 2026</p>
 
-> In Part 2, the TCP handshake turned out to be a negotiation fee charged on every connection. <br>In Part 3, HTTP evolved three times to escape the constraints of that fee. <br>In Part 4, load balancers split traffic based on how much they were willing to know.
+> In Part 2, the **TCP handshake cost** was a fundamental transaction cost for every connection. <br>In Part 3, HTTP underwent three structural shifts to overcome that specific cost. <br>In Part 4, load balancers distributed traffic by choosing how much data they would analyze.
 >
-> But real services don't experience these problems one at a time. Loading a product page hits RTT, multiplexing, and CDN placement all at once. Processing a single payment triggers TCP reliability, application-layer retries, and idempotency in the same breath. The parts have been laid out. Now they meet traffic.
+> But real services don't experience these problems one at a time. Loading a product page hits RTT, multiplexing, and CDN placement all at once. Processing a single payment triggers TCP reliability, application-layer retries, and idempotency in the same breath. The parts have been laid out. Now they meet traffic
 
 <br>
 <br>
 
-This post covers how concepts from Network Parts 1–4 combine in practice. Reading each concept in the part where it first appeared will make the trade-offs in every scenario click faster.
+Parts 1 through 4 examined each component in isolation — one layer, one protocol, one routing decision at a time. That was necessary. It is impossible to diagnose a bottleneck without knowing where to look.
 
-Parts 1 through 4 examined each component in isolation — one layer, one protocol, one routing decision at a time. That was necessary. You can't diagnose a bottleneck if you don't know where to look.
+But isolation is not how systems operate. A single user action — loading a page, sending a message, completing a payment — passes through multiple layers simultaneously. The bottleneck can form at any one of those layers. The question is no longer "what does this component do?" It is "**which component is the constraint right now, and what combination resolves it?**"
 
-But isolation is not how systems operate. A single user action — loading a page, sending a message, completing a payment — passes through multiple layers simultaneously, and the bottleneck can form at any one of them. The question is no longer "what does this component do?" It's **"which component is the constraint right now, and what combination resolves it?"**
+Four scenarios. Four different bottlenecks. Four different answers. All are assembled from parts already seen.
 
-Four scenarios. Four different bottlenecks. Four different answers — all assembled from parts we've already seen.
 
 <br>
 
 
-### Image-Heavy Pages — When Two Constraints Hit at Once
+## Image-Heavy Pages — When Two Constraints Hit at Once
 
-Picture an e-commerce product page. A single scroll loads 80 high-resolution images. Each image is a separate HTTP request. Each request pays the cost of the *TCP handshake*. The bottleneck here forms across two layers: the Network Layer / L3 (the routing path that determines RTT) and the Application Layer / L7 (the protocol that determines how requests are delivered).
+Picture an e-commerce product page. A single scroll loads 80 high-resolution images. Each image is a separate HTTP request. Each request pays the *TCP handshake* cost. The bottleneck here forms across two layers — the Network Layer (L3) and the Application Layer (L7).
 
-**The first bottleneck is distance — an L3 constraint.**
+### The first bottleneck is distance — an L3 constraint.
 
-Seoul to a US server costs roughly 150ms per round trip. That's *RTT* — a fixed cost locked to physics, determined by the routing path at L3. 80 images × 150ms = 12 seconds of pure network delay, even before the server starts processing. The bottleneck isn't computation. It's geography.
+Seoul to a US server costs roughly 150ms per round trip. That's *RTT* — a fixed cost locked to physics, determined by the routing path at L3. 80 images × 150ms = 12 seconds of pure network delay, before the server even starts processing. The constraint is geography, not computation.
 
-A **CDN (Content Delivery Network)** resolves this by caching static content on edge servers physically close to users. Seoul users hit a Seoul edge server. São Paulo users hit a São Paulo edge server. *RTT* gets reduced — not by making the connection faster, but by shortening the L3 path itself.
+A **CDN (Content Delivery Network)** resolves this by caching static content on edge servers physically close to users. Seoul users hit a Seoul edge server. São Paulo users hit a São Paulo edge server. *RTT* drops not by making the connection faster, but by shortening the L3 path itself.
 
-In the language of the *Theory of Constraints (TOC)*: when RTT is the constraint, the strategy isn't to optimize what happens after the packet arrives. It's to move the server closer to the user so the packet has less distance to travel.
+*Theory of Constraints (TOC)*: when RTT is the constraint, the fix is not faster servers but closer servers.
 
-**The second bottleneck is sequential delivery — an L7 constraint.**
+### The second bottleneck is sequential delivery — an L7 constraint.
 
 Even with a nearby CDN, 80 images over HTTP/1.1 means *Head-of-Line Blocking*. One slow image stalls everything behind it.
 
 HTTP/2 *multiplexing* breaks those 80 requests into interleaved frames over a single connection. Small thumbnails slip through between chunks of a large hero image. The connection stays alive with *Keep-Alive*, and the queue disappears with *multiplexing*. The fix happens entirely at L7 — nothing below it changes.
+
+Furthermore, HTTP/2 uses **HPACK header compression** to eliminate header redundancy. Instead of resending static data like cookies across 80 requests, it transmits only the changes. **By minimizing these repetitive 'administrative costs,' the connection amortizes its overhead across every subsequent message.**
 
 ```
 [Without CDN + HTTP/1.1]
@@ -85,23 +86,22 @@ Client
 If static content dominates and users are geographically distributed, CDN + HTTP/2 is the first combination to consider. 
 If content is dynamic and users are concentrated in a single region, CDN adds little.
 
-*Theory of Constraints (TOC)*, applied: **when two constraints sit on different layers, the fix must address both. Solving one while ignoring the other moves the bottleneck — it doesn't remove it.**
+*Theory of Constraints (TOC)*, applied: when two constraints sit on different layers, the fix must address both. **Solving one while ignoring the other moves the bottleneck. It doesn't remove it.**
 
-<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
-  <em>TCP handshake cost, RTT, Keep-Alive</em> → Network Part 2<br>
-  <em>Head-of-Line Blocking, multiplexing</em> → Network Part 3<br>
-  <em>Theory of Constraints (TOC)</em> → Network Part 1
-</div>
+<em>TCP handshake cost, RTT, Keep-Alive</em> → Network Part 2<br>
+<em>Head-of-Line Blocking, multiplexing</em> → Network Part 3<br>
+<em>Theory of Constraints (TOC)</em> → Network Part 1
+
 
 <br>
 
-### Real-Time Messaging — Where the Connection Cost Moves
+## Real-Time Messaging — Where the Connection Cost Moves
 
-A chat application needs messages to arrive instantly. A notification system needs to push updates without the client asking. Both share the same structural problem: **the server needs to talk first.**
+A chat application needs messages to arrive instantly. A notification system needs to push updates without the client asking. These services share a critical structural requirement: **The server must initiate communication first.**
 
-HTTP was designed the other way around. The client asks, the server answers. If the server has something new, it has no way to say so — it has to wait for the next question. This is an L7 constraint — the request-response model doesn't support server-initiated communication. The three approaches below each work around this at L7, but their costs cascade down to the Transport Layer / L4, where connection count and port limits live.
+HTTP was designed the other way around. The client asks, the server answers. If the server has something new, it has no way to say so — it has to wait for the next question. This is an L7 constraint — the request-response model doesn't support server-initiated communication. 
 
-Three approaches exist. Each pays the connection cost in a different place.
+The three approaches below work around this at L7, but each allocates the connection cost in a different place — eventually cascading down to L4, where port limits live.
 
 | Protocol | Connection Cost | Server Resources | Direction |
 |--|--|--|--|
@@ -113,9 +113,9 @@ Where does the difference come from? One at a time.
 
 <br>
 
-**Long Polling — One response, one reconnection, a new contract every time.**
+### Long Polling — One response, one reconnection, a new contract every time.
 
-The client sends a request and the server holds it open — not responding until there's something new to say. When a response finally arrives, the client immediately sends another request. The connection is alive, but it's rebuilt every round.
+The client sends a request and the server holds it open. It does not respond until there is something new to say. When a response finally arrives, the client immediately sends another request. The connection is alive, but it is rebuilt every round.
 
 ```
 [Long Polling — Reconnect Loop]
@@ -138,15 +138,15 @@ Client                            Server
 
 ```
 
-From *Transaction Cost Theory*: Long Polling is the *TCP handshake* problem in disguise. Every response-request cycle is a new negotiation. The contract doesn't carry over. *The most effective way to reduce transaction costs is to reduce the number of transactions* — Long Polling does the opposite. It multiplies them.
+From *Transaction Cost Theory*: Long Polling is the *TCP handshake* problem in disguise. Every response-request cycle is a new negotiation. The contract doesn't carry over. **The most effective way to reduce transaction costs is to reduce the number of transactions.** Long Polling does the opposite. It multiplies them.
 
-The overhead is real. Each reconnection carries HTTP headers, potentially a new TCP handshake (if *Keep-Alive* expires), and a fresh slot in the server's connection pool. At scale — tens of thousands of users waiting for messages — the negotiation fee alone saturates the server.
+Each reconnection carries HTTP headers, a new *TCP handshake* when *Keep-Alive* expires, and a fresh slot in the server connection pool. At tens of thousands of users, these negotiation fees alone saturate the server.
 
 <br>
 
-**SSE (Server-Sent Events) — One channel, one direction, held open indefinitely.**
+### SSE (Server-Sent Events) — One channel, one direction, held open indefinitely.
 
-SSE holds a single HTTP connection open indefinitely. The server pushes data down whenever it has something new. The client never reconnects — it just listens.
+SSE maintains a single HTTP connection indefinitely, allowing the server to push data whenever new information exists. The client never reconnects; it simply stays active to listen to the continuous stream.
 
 ```
 [SSE — One-Way Stream]
@@ -164,15 +164,15 @@ Client                             Server
   │        (connection stays open)  │
 ```
 
-This is *Keep-Alive* logic applied to real-time delivery. One handshake, many messages. The negotiation fee is paid once and amortized across every subsequent event.
+This model applies *Keep-Alive* logic to real-time delivery. One *TCP handshake* serves many messages. The system pays the negotiation fee **only once**. 
 
-The trade-off: SSE is one-directional. The server talks, the client listens. For a notification feed — stock price alerts, live scores, deployment status updates — that's exactly right. For a chat application where the client also needs to send messages back through the same channel, SSE falls short. The client would need a separate HTTP request for every outbound message, reintroducing the per-message cost that SSE was designed to avoid.
+The trade-off is one-directional. SSE fits notification feeds — stock price alerts, live scores, deployment status — perfectly. For interactive chat, the client must send a new HTTP request for every outbound message, reintroducing per-message cost. **SSE optimizes only half the channel.**
 
 <br>
 
-**WebSocket — One connection, both directions, permanently.**
+### WebSocket — One connection, both directions, permanently.
 
-WebSocket starts as an HTTP request, then upgrades the connection to a persistent, full-duplex channel. Both sides can send data at any time. No re-negotiation. No new connections. The contract is signed once.
+WebSocket begins as an HTTP request and upgrades to a persistent, full-duplex channel. Both sides send data at any time without re-negotiation. The system signs the contract only once.
 
 ```
 [WebSocket — Full Duplex Communication]
@@ -193,40 +193,34 @@ Client                            Server
   │            ...                 │
 ```
 
-Transaction cost: near zero per message. The entire negotiation overhead is front-loaded into a single upgrade handshake.
+From *Transaction Cost Theory*: The transaction cost remains near zero per message. The entire negotiation overhead is front-loaded into a single upgrade handshake.
 
-But the cost doesn't vanish — it moves. Each WebSocket connection holds a persistent TCP socket open on the server. Roughly *28,000 usable ports* per server. *TIME_WAIT* doesn't apply to connections that never close, but the port stays occupied for as long as the connection lives. A chat service with 50,000 concurrent users needs 50,000 open sockets — permanently.
+But the cost does not vanish; it moves. Each WebSocket connection keeps a TCP socket and its port occupied for the entire session.
 
-The connection cost went from **per-message** (Long Polling) to **per-session** (WebSocket). Cheaper per interaction, but the resource commitment is continuous.
+The physical limits are strict. A server has roughly *28,000 usable ports*. A chat service with 50,000 concurrent users needs 50,000 open sockets permanently. *TIME_WAIT* does not apply here because these connections never close.
 
-<br>
+The connection cost went from **per-message** (Long Polling) to **per-session** (WebSocket) — cheaper per interaction, but a continuous resource commitment.
 
 The question remains the same: **what's more expensive — renegotiating constantly, or holding the line open?**
 
-If the bottleneck is message frequency (thousands of messages per second per user), WebSocket wins — the per-message cost of Long Polling would be devastating. 
-If the bottleneck is connection count (millions of users, infrequent updates), SSE or even Long Polling may be more efficient — they release resources between interactions.
+*   **Message frequency bottleneck** (thousands of messages per second per user) → WebSocket wins. The per-message cost of Long Polling would be devastating.
+*   **Connection count bottleneck** (millions of users, infrequent updates) → SSE or Long Polling may be more efficient. They release resources between interactions.
 
 *Theory of Constraints (TOC)*, applied: **find which resource saturates first — message throughput or connection count — and choose accordingly.**
 
-<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
-  <em>Transaction Cost Theory, TCP handshake, Keep-Alive, TIME_WAIT</em> → Network Part 2<br>
-  <em>L4 port limit (28,000)</em> → Network Part 1<br>
-  <em>Theory of Constraints (TOC)</em> → Network Part 1
-</div>
+<em>Transaction Cost Theory, TCP handshake, Keep-Alive, TIME_WAIT</em> → Network Part 2<br>
+<em>28,000 usable ports</em> → Network Part 1<br>
+<em>Theory of Constraints (TOC)</em> → Network Part 1
 
 <br>
 
-### Global Routing — Closing the Information Gap
+## Global Routing — Closing the Information Gap
 
-A service with users in Seoul, London, and São Paulo runs all its servers in `us-east-1`. Seoul to Virginia is roughly 150ms *RTT*. London is around 80ms. São Paulo, roughly 180ms.
+When a service spans continents, every request pays for distance. The server responds in 5ms, but the user waits 150ms before the response even begins its return trip. **The bottleneck isn't the server. It's the L3 path between the server and the user.**
 
-Every request from every user pays that cost. Not once — on every interaction. The server could respond in 5ms, but the user waits 150ms before the response even starts its return trip. **The bottleneck isn't the server. It's the L3 path between the server and the user.**
+### The problem — DNS doesn't know where you are
 
-DNS — operating at L7 — is where the routing decision is made. *DNS round-robin* can't solve the distance problem. It rotates IPs without knowing where the client is. A Seoul user might get routed to Virginia while a server in Tokyo sits idle. This is *Information Asymmetry* — the DNS server lacks the information the routing decision requires.
-
-**GeoDNS closes that information gap.**
-
-When a DNS query arrives, GeoDNS reads the client's IP address at L7, infers their geographic location, and returns the IP of the nearest server. This decision determines the L3 routing path — L7's information changes L3's cost. Seoul users get the Tokyo server. London users get the Frankfurt server. São Paulo users get the São Paulo server.
+A service with users in Seoul, London, and São Paulo runs all its servers in `us-east-1`. Seoul to Virginia is roughly 150ms *RTT*. London is around 80ms. São Paulo is roughly 180ms.
 
 ```
 [Traditional DNS Round Robin]
@@ -248,9 +242,18 @@ When a DNS query arrives, GeoDNS reads the client's IP address at L7, infers the
    (Virginia)   (Virginia)   (Virginia)
        │            │            │
      150ms         80ms        180ms
+```
 
------------------------------------------------
+DNS operates at L7, where the routing decision is made. However, *DNS round-robin* cannot solve the distance problem. It rotates IPs without knowing where the client is. A Seoul user might be routed to Virginia while a server in Tokyo sits idle.
 
+This is *Information Asymmetry* — the DNS server lacks the information the routing decision requires.
+
+### The fix — GeoDNS + Edge servers
+
+When a DNS query arrives, GeoDNS reads the client's IP at L7 to infer their location. It then returns the nearest server's IP, effectively using L7 information to lower L3 routing costs. Seoul users get Tokyo, London gets Frankfurt, and São Paulo gets their local server.
+
+
+```
 [GeoDNS (Location-Aware Routing)]
 
               ┌─────────────┐
@@ -273,29 +276,29 @@ When a DNS query arrives, GeoDNS reads the client's IP address at L7, infers the
      30ms          15ms           10ms
 ```
 
-Where *DNS round-robin* was blind rotation, GeoDNS is informed routing. The information that was missing — the client's location — is now part of the decision. *How you handle the information gap determines the outcome.* GeoDNS handles it by acquiring the one piece of information that matters most: **where the user is.**
+Where *DNS round-robin* was blind rotation, GeoDNS is informed routing. The information that was missing — the client's location — is now part of the decision. **How you bridge this *information gap* determines the outcome.** GeoDNS handles it by acquiring the one piece of information that matters most: **where the user is.**
 
-**Edge servers extend this logic beyond static content.** A CDN caches images and files. An edge server can run L7 computation — authentication checks, personalization logic, API responses — close to the user. Where CDN shortened L3's distance, edge servers move L7's processing itself toward the user.
+While a CDN caches static content to shorten L3 distance, an edge server moves L7 computation itself — authentication checks, personalization logic, API responses — toward the user.
 
-If users span two or more continents, GeoDNS + edge servers is the only way to structurally reduce RTT. 
-If traffic fits comfortably in a single region, it only adds operational complexity.
+If users span two or more continents, GeoDNS + edge servers is the only way to structurally reduce RTT. However when traffic fits comfortably in a single region, it only adds operational complexity.
 
 *Information Asymmetry*, applied: **the routing decision is only as good as the information it has. Close the gap, and the cost drops. Ignore it, and geography wins by default.**
 
-<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
-  <em>RTT</em> → Network Part 2<br>
-  <em>DNS round-robin, Information Asymmetry</em> → Network Part 4
-</div>
+<em>RTT</em> → Network Part 2<br>
+<em>DNS round-robin, Information Asymmetry</em> → Network Part 4
+
 
 <br>
 
-### Payment Retries — Where TCP's Trust Ends
+## Payment Retries — Where TCP's Trust Ends
 
-A user clicks "Pay." The request reaches the server. The server charges the card. Then the response is lost — a network timeout somewhere between the server and the client.
+A user clicks "Pay" and the request reaches the server. The server charges the card, but the response is lost. A network timeout occurs somewhere between the server and the client.
 
 The client sees: "Request failed." The user clicks "Pay" again. A second request arrives at the server. Without protection, the card is charged twice.
 
-**TCP's guarantee, revisited.** *TCP purchases reliability at the cost of speed.* The handshake ensures packets arrive, in order, without loss. But TCP's guarantee operates at the transport layer. It promises that bytes will be delivered. It says nothing about what happens after the application processes those bytes.
+### TCP's guarantee, revisited.
+
+*TCP purchases reliability at the cost of speed* — a *Transaction Cost* paid once per connection to guarantee delivery at L4. But that contract is bounded. It promises that bytes will be delivered, in order, without loss. It says nothing about what happens after the application processes those bytes.
 
 The timeout above isn't a TCP failure. TCP delivered the request successfully. The server processed it. The response was lost on its way back. L4's TCP did its job. L7 was left unprotected.
 
@@ -312,7 +315,9 @@ Client                        Server
 |                              |  ✗ Server charges the card AGAIN
 ```
 
-**An idempotency key solves this at L7.** The client generates a unique key for each intended action and attaches it to the request. If the same key arrives twice, the server recognizes it as a retry and returns the original result without re-executing.
+### An idempotency key solves this at L7.
+
+The client generates a unique key for each intended action and attaches it to the request. If the same key arrives twice, the server recognizes it as a retry and returns the original result without re-executing.
 
 ```
 Client                        Server
@@ -328,34 +333,32 @@ Client                        Server
 |  <—— Response ————————————   |  ✓ Client receives confirmation
 ```
 
-The key distinction: **TCP guarantees at-least-once delivery. The application needs exactly-once execution.** Idempotency keys bridge that gap.
+In distributed systems, a timeout represents an **unknown state** rather than a failure. The client doesn't know if the charge went through, and that uncertainty is the most expensive cost in payments.
 
-This is where network-layer concepts meet application-layer design. The trust that the *TCP handshake* purchases extends only to the L4 boundary. Beyond that, reliability is L7's responsibility.
+The key distinction is simple. **TCP guarantees at-least-once delivery, but the application needs exactly-once execution.** Idempotency keys bridge that gap — turning the retry into a verified replay rather than a new transaction.
 
 Any write operation where network retries can occur — payments, orders, reservations — needs an idempotency key. Read-only APIs do not.
 
 *Transaction Cost Theory*, applied: **TCP's contract covers L4. Guaranteeing execution at L7 requires a separate contract — and the idempotency key is that contract's cost.**
 
+<em>TCP handshake, TCP's trust cost</em> → Network Part 2 <br>
 
-<div style="text-align: right; margin-top: -0.1rem; font-size: 0.85rem; color: var(--sl-color-gray-3);">
-  <em>TCP handshake, TCP's trust cost</em> → Network Part 2
-</div>
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://bravenewgeek.com/you-cannot-have-exactly-once-delivery/">Brave New Geek: You Cannot Have Exactly-Once Delivery</a>
-</div>
+*Reference: [Brave New Geek: You Cannot Have Exactly-Once Delivery](https://bravenewgeek.com/you-cannot-have-exactly-once-delivery/)*
+
 
 <br>
 
-### The Bottom Line
+## The Bottom Line
 
 Four scenarios. Four bottlenecks. Four different combinations of the same building blocks.
 
-Image loading paid the cost of distance and the cost of queuing — at two different layers, simultaneously. Real-time messaging moved the negotiation fee from per-message to per-session, trading frequency for commitment. Global routing closed the information gap that DNS couldn't see. Payment retries revealed the boundary where TCP's trust expires and the application must build its own.
+* Image loading paid two costs at once. Distance at L3 and queuing at L7.
+* Real-time messaging moved the negotiation fee from per-message to per-session, trading frequency for commitment.
+* Global routing closed the information gap that DNS couldn't see.
+* Payment retries revealed the boundary where TCP's trust expires and the application must build its own.
 
 Every scenario asked the same question this series has been asking from the start: **where is the bottleneck, and what are you willing to trade to clear it?**
 
-The answer was never the same twice.
-
 **There is no universal architecture. There is only the architecture that matches the constraint you're facing right now.**
 
-Next up: the network delivered the request. Now the server has to process it — and the first thing it touches is the database. The idempotency key from payment retries — the guarantee that the same request executes only once — cannot be completed without a database transaction. Every query, every write, every transaction ultimately hits one physical constraint: disk I/O. That's where the Database series begins.
+Next up: the network delivered the request. Now the server has to process it — and every query ultimately hits one physical constraint. That's where the Database series picks up.
