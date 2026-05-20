@@ -110,7 +110,7 @@ The Red-Black Tree (1972) treated AVL's balance as overpriced. It opted for a wo
 
 This pragmatic compromise came to dominate the general-purpose market for managing sorted data in memory. The Linux kernel scheduler, Java’s `TreeMap`, and C++’s `std::map` all leverage this solution. 
 
-But this champion collapsed in front of database indexes, where the rules of cost had changed.
+But this champion collapsed in the disk environment, where the rules of cost had changed.
 
 <br>
 
