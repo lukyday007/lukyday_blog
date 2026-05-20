@@ -1,5 +1,5 @@
 ---
-title: Database Part 2 - 인덱스라는 거래의 양면
+title: 데이터베이스 2편 - 인덱스 구조 속 거래의 양면
 description: 인덱스는 공짜 검색이 아니다. 읽기를 위해 쓰기를 파는 거래이고, 그 거래의 절반은 보이지 않는 곳에서 청구된다.
 sidebar:
   order: 8
