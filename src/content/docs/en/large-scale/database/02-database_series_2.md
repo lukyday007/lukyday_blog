@@ -248,8 +248,6 @@ Hundreds of indexes in a database are not a design failure. They are the result 
 
 ### Making the Hidden Cost Visible
 
-Indexes are not free. They always move cost somewhere else in the system.
-
 Index design is not just a performance problem—it is a question of **how cost is distributed**. When a new index is added, two things need to be evaluated.
 
 First, **who benefits from it**. There is no reason to trade write performance for a statistical query that runs only a few times a year, while INSERT operations happen dozens of times per second. Every index should be justified by queries that rely on it frequently.
@@ -263,10 +261,10 @@ The core of index management is not growth, but **cleanup**. Unused indexes beco
 
 ## The Bottom Line
 
-Indexes are the most powerful tool databases use to avoid full table scans. This tool enables queries to skip 99% of data, directly realizing the premise established in DB Part 1: **read less from disk**. However, this capability is not free. Indexes trade writes for reads, and part of that cost is paid invisibly.
+Indexes are the most powerful tool databases use to avoid full table scans. They allow queries to skip over 99% of the data, directly realizing the premise established in DB Part 1: **read less from disk**. However, indexes trade writes for reads, and the cost is paid somewhere out of sight.
 
 Engineers who understand this structure weigh the decision to add an index just as carefully as the decision to remove one.
 
-**Which query does this index prioritize, and who pays the price for that priority?**
+**Which queries does this index prioritize, and where is the cost of that priority ultimately paid?**
 
 Next up: when multiple users access the same data at the same time, the database has to decide what to allow and what to block. When performance and consistency collide, a set of rules emerges—this is where **transactions** come in.
