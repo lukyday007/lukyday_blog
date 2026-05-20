@@ -1,5 +1,5 @@
 ---
-title: Database Part 2 - Two Sides of the Index Trade
+title: Database Part 2 - The Two Sides of Index Structures
 description: Indexes are not a free search mechanism. They are a trade where writes are sold for reads, and half of that transaction is billed invisibly.
 sidebar:
   order: 8
