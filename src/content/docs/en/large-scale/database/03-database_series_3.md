@@ -12,7 +12,7 @@ date: 2026-05-22
 >
 > The Google BigQuery outage on October 13, 2022, follows the same fundamental pattern. The code was identical to what ran every day, but the entire system broke down when traffic spiked briefly. The safety mechanism (locks) implemented to prevent data inconsistency produced the exact opposite effect. One request waited for another, which in turn waited for yet another, leading into a deadlock where no locks could be released.
 
-*Reference: [E-Commerce Race Condition (2026)](https://medium.com/@chaturvediinitin/how-i-eliminated-inventory-race-conditions-in-a-production-e-commerce-system-2302ba81846b)*
+*Reference: [E-Commerce Race Condition (2026)](https://medium.com/@chaturvediinitin/how-i-eliminated-inventory-race-conditions-in-a-production-e-commerce-system-2302ba81846b)*   <br>
 *Reference: [Production Postmortem Collection (danluu)](https://github.com/danluu/post-mortems)*
 
 

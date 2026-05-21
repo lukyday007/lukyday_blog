@@ -12,7 +12,7 @@ date: 2026-05-22
 >
 > 2022년 10월 13일에 발생했던 구글 빅쿼리(BigQuery) 장애도 이와 같다. 평소와 동일한 코드였지만 트래픽이 잠시 늘어난 순간 전체 처리량이 마비되었다. 데이터 오차를 막기 위해 세운 안전장치(락)가 역효과를 낸 것이다. 하나의 요청이 다른 요청을 기다리고, 그 요청이 또 다른 요청을 기다리는 교착상태(데드락)에 빠져 락이 풀리지 않았다.
 
-*Reference: [E-Commerce Race Condition (2026)](https://medium.com/@chaturvediinitin/how-i-eliminated-inventory-race-conditions-in-a-production-e-commerce-system-2302ba81846b)*
+*Reference: [E-Commerce Race Condition (2026)](https://medium.com/@chaturvediinitin/how-i-eliminated-inventory-race-conditions-in-a-production-e-commerce-system-2302ba81846b)*  <br>
 *Reference: [Production Postmortem Collection (danluu)](https://github.com/danluu/post-mortems)*
 
 
