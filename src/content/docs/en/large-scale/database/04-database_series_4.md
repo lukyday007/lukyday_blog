@@ -1,5 +1,5 @@
 ---
-title: "Database Part 4 — Distributed Systems: Separating Responsibility and Decision-Making Authority"
+title: "Database Part 4 — Distributed Systems, Separating Responsibility and Decision-Making Authority"
 description: "When data outgrows a single machine, the best architectural strategy is to decompose the monolith. And the essence of that decomposition is not dividing storage — it is dividing responsibility and decision-making authority."
 sidebar:
   order: 10
