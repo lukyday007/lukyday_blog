@@ -273,7 +273,7 @@ Range 샤딩은 순서를 보존했지만, 최신 데이터로 트래픽이 몰�
 
 *Reference: [Alfred Chandler, "Strategy and Structure" (1962)](https://en.wikipedia.org/wiki/Strategy_and_Structure)*
 
-### 무늬만 분점인 조직의 비극
+### 무늬만 지사인 조직의 비극
 
 결국 GM은 사장의 실시간 간섭을 끊고, 각 브랜드 사업부장에게 현장 대응의 전권을 넘기는 '사업부제'를 도입했다. 본사는 장기 전략만 짜고, 일상적인 운영 판단은 각 지사가 독립적으로 내리게 한 것이다. 우리가 지금까지 살펴본 기술의 여정도 이 조직 개편과 정확히 일치한다.
 
