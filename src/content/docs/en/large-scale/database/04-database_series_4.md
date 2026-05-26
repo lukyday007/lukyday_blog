@@ -73,26 +73,28 @@ To reduce load efficiently, the system divides labor by role while keeping the d
 
 The principle is straightforward: **final decision-making stays with the executive, while routine inquiries are delegated to staff**. Mutations that cannot afford to be wrong — creates, updates, deletes — are handled by a single Master. The bulk of the traffic, read requests, is distributed across multiple Replicas.
 
+
 ```
 [Replication]
 
-             WRITE PATH (single source)
-                         │
-                         ▼
-                   ┌───────────┐
-                   │   MASTER  │
-                   │  (write)  │
-                   └─────┬─────┘
-     ┌───────────────────┼───────────────────┐
-     ▼                   ▼                   ▼
-┌──────────┐        ┌─────────┐       ┌──────────┐
-│ SLAVE 1  │        │ SLAVE 2 │       │ SLAVE 3  │
-│ (read)   │        │ (read)  │       │ (read)   │
-└─────┬────┘        └────┬────┘       └──────┬───┘
-      │                  │                   │
-      └──── replication lag (time delay) ────┘
+                 WRITE PATH (single source)
+                             │
+                             ▼
+                       ┌───────────┐
+                       │   MASTER  │
+                       │  (write)  │
+                       └─────┬─────┘
+                             │
+         ┌───────────────────┼───────────────────┐
+         ▼                   ▼                   ▼
+    ┌───────────┐      ┌───────────┐       ┌───────────┐
+    │ REPLICA 1 │      │ REPLICA 2 │       │ REPLICA 3 │
+    │   (read)  │      │   (read)  │       │   (read)  │
+    └─────┬─────┘      └─────┬─────┘       └─────┬─────┘
+          │                  │                   │
+          └──── replication lag (time delay) ────┘
 
-              → stale reads possible        
+                  → stale reads possible
 ```
 
 ### The Latency Cost of Delegation
