@@ -1,5 +1,5 @@
 ---
-title: "Database Part 5 — Redefining Accuracy: The Cost of Perfection"
+title: "Database Part 5 — Redefining Accuracy, The Price of Perfection"
 description: "Maintaining perfect real-time accuracy at scale demands a price. The question is not how to maximize consistency everywhere, but where to pay for it."
 sidebar:
   order: 11
