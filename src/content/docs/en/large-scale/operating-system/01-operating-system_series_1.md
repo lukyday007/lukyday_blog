@@ -1,12 +1,12 @@
 ---
-title: "OS Series Part 1 — Why Servers Slow Down: The Real Cost of Concurrency"
+title: "OS Part 1 — Why Servers Slow Down: The Real Cost of Concurrency"
 description: "When a server slows down, the first question an engineer should ask is not 'Is the CPU overloaded?' It is 'What is the CPU waiting for?' Concurrency is never free. Every additional worker comes with a coordination cost."
 sidebar:
   order: 13
-date: 2026-06-11
+date: 2026-06-15
 ---
 
-<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: June 11, 2026</p>
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: June 15, 2026</p>
 
 > In 2025, a production server started receiving 10,000 requests per minute. Response times shot from 200ms to over 40 seconds. The engineering team increased the connection pool from 50 to 100, then to 150. Nothing improved. CPU utilization sat at just 20%, yet a thread dump revealed that most threads were stuck in TIMED_WAITING — doing absolutely nothing.
 >

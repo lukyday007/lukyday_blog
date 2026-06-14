@@ -1,12 +1,12 @@
 ---
-title: 운영체제 1편 — 자원 경쟁의 본질, 서버는 왜 느려지는가
+title: 운영체제 1편 - 자원 경쟁의 본질, 서버는 왜 느려지는가
 description: "'서버가 느려졌다'는 보고를 받은 엔지니어가 가장 먼저 던져야 할 질문은 'CPU가 부족한가'가 아니다. 'CPU가 무엇을 기다리고 있는가'다. 동시성은 공짜가 아니며, 일꾼을 늘리는 결정에는 반드시 조율 비용이 청구된다."
 sidebar:
   order: 13
-date: 2026-06-11
+date: 2026-06-15
 ---
 
-<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: June 11, 2026</p>
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: June 15, 2026</p>
 
 > 2025년, 한 프로덕션 서버가 분당 10,000 요청을 받기 시작하자 응답 시간이 200ms에서 40초 이상으로 폭증했다. 엔지니어는 커넥션 풀 크기를 50에서 100으로, 다시 150으로 늘렸다. 상황은 나아지지 않았다. CPU 사용률은 고작 20% 이었으나, 스레드 덤프를 떠보니 대다수의 스레드가 TIMED_WAITING 상태로 묶여 있었다.
 >
