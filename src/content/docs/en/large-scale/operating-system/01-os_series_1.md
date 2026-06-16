@@ -152,7 +152,7 @@ Past the peak, **context switching, lock contention, and cache pollution** overw
 
 In 1975, Frederick Brooks analyzed why the most intuitive fix for a late software project always backfires. When deadlines slip, managers add people. But adding people makes the project later.
 
-The reason: as the team grows, the time spent **aligning with each other** rises faster than the time spent working. With $n$ people, communication paths explode as $n(n-1)/2$.
+The reason: as the team grows, the time spent **aligning with each other** rises faster than the time spent working. With n people, communication paths explode as n(n-1)/2.
 
 *Reference: [Frederick Brooks, "The Mythical Man-Month" (1975)](https://en.wikipedia.org/wiki/The_Mythical_Man-Month)*
 
