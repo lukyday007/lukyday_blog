@@ -1,5 +1,5 @@
 ---
-title: "OS Series Part 2 — The Evolution of I/O Models: Eliminating the Cost of Finding Work"
+title: "OS Part 2 — The Evolution of I/O Models: Eliminating the Cost of Finding Work"
 description: "The real bottleneck was never throughput. It was the cost of figuring out which connections were ready. From select to epoll, from exhaustive scanning to event notification — operating systems evolved by changing how they search."
 sidebar:
   order: 14
