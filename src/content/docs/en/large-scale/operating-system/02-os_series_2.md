@@ -26,33 +26,57 @@ In Part 1, we saw that adding more workers causes coordination costs to explode.
 
 <br>
 
-## Out of 10,000 Connections, Who is Ready?
+## Out of 10,000 Connections, Who Is Ready?
 
-The conclusion of Part 1 was clear. Most servers don't slow down because the CPU is busy, but because they are waiting on I/O. Concurrency is the strategy to keep the CPU working on other tasks instead of sitting idle during this waiting time.
+Imagine a call center with 10,000 agents.
 
-But when concurrent connections scale up to tens or hundreds of thousands, a new problem appears. There might be 100,000 connections, but at this exact moment, fewer than 100 might actually be sending data. The other 99,900 are just holding the connection and waiting.
+The problem isn't that there are 10,000 customers. Fewer than 100 are actually on a call right now. The other 9,900 are just holding the line, waiting in silence.
 
-From the server's perspective, the real problem is not "how fast can we process requests?" The bottleneck becomes **the cost of finding which connections out of those 100,000 are ready to be processed right now**.
+Now imagine the floor manager has to walk to each of those 10,000 desks, one by one, and ask:
 
-### Blocking I/O — Stuck Waiting
+"Are you on a call right now?"
+"How about you?"
+"And you?"
 
-The most primitive way to handle I/O is simple. When you call read(), the thread does not return until data arrives. This is **Blocking I/O**. The thread simply sits there, unable to do anything until data arrives.
+By the time the manager finishes the round, more time has been spent *finding* who needs help than actually *helping* anyone.
 
-The problem starts when the server handles this Blocking I/O by **assigning one thread per connection**. If there are 100 connections, 100 threads wait; if there are 10,000 connections, 10,000 threads wait.
+Servers face the same problem. A large-scale service might hold tens of thousands of connections open at once. But only a tiny fraction are actively sending data at any given moment. The bottleneck isn't how fast the server can process requests. It's **the cost of figuring out which connections need processing right now.**
 
-As we saw in Part 1, 10,000 threads mean a massive spike in context switching, lock contention, and cache pollution. But there is a more fundamental problem with this model. Out of the 10,000 threads, only a tiny fraction are actually receiving data and working. **The vast majority are doing absolutely nothing while just holding onto resources.**
+In Part 1, the bottleneck was coordination cost. More workers meant more management overhead.
 
-To use an analogy, it’s like hiring 10,000 workers and sitting each one in front of a dedicated telephone. They can do nothing but wait until a call comes in. Only 100 people are calling, but the other 9,900 are just sitting there, getting paid.
+This time, the bottleneck is different. It's not about managing the workers. It's about **finding which ones have work to do.**
+
+### How Did We Get Here?
+
+In the early days, this wasn't much of a problem. Servers didn't have to juggle that many connections at once. The simplest solution was to assign a dedicated handler to each connection.
+
+One phone call comes in, one agent picks it up. That agent stays on the line until the call is done.
+
+Servers worked the same way. One connection, one thread.
+
+### Blocking I/O — Frozen While Waiting
+
+The foundation of this approach is **Blocking I/O.**
+
+When you call `read()`, the thread doesn't come back until data arrives. Think of it as an agent waiting for the customer to speak. If the customer says nothing for ten seconds, the agent sits there doing nothing for ten seconds.
+
+The trouble starts when this scales up. 100 connections means 100 threads waiting. 10,000 connections means 10,000 threads waiting.
 
 ### The Limits of Thread-per-Request
 
-Tying a worker and a task one-to-one like this is called the **Thread-per-Request** (or Thread-per-Connection) model. This was exactly how early Apache was structured, and it was the root cause of the C10K problem we saw at the beginning of Part 1.
+This one-to-one model — **one thread per connection** — is called **Thread-per-Request** (or Thread-per-Connection). Early Apache was built exactly this way.
 
-The problem is that as the number of connections grows, the number of threads must grow at the same rate. And most of those threads do absolutely nothing. **The cost of idle threads occupying system resources** becomes much higher than the cost of actually processing the work.
+On the surface, it seems reasonable. Every connection has a dedicated handler. Easy to manage. But as scale grows, the cracks appear.
 
-In the end, the real bottleneck of the Thread-per-Request model isn't processing speed. **The structure itself—where threads are monitoring every single connection, even those that aren't ready—is the bottleneck.**
+Having 10,000 connections doesn't mean 10,000 connections are working at the same time. Most of them are just waiting. Yet the server has to keep a thread alive for every single one. That's where the context switching, lock contention, and cache pollution from Part 1 come back.
 
-So the question changes. Instead of monitoring 10,000 connections with 10,000 threads, **is there a way to pick out and process only the connections that are ready?**
+But there's a more fundamental problem.
+
+The server is spending enormous effort watching connections that aren't doing anything. In other words, the issue isn't throughput. It's **search cost**.
+
+So the question shifts naturally.
+
+**Instead of watching all 10,000 connections, is there a way to be notified only when one is ready?**
 
 
 <br>
