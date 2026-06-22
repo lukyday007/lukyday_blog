@@ -236,7 +236,7 @@ Following the coordination cost of Part 1 and the search cost of Part 2, the ess
 
 <br>
 
-## Wrapping Up
+## The Bottom Line
 
 Operating systems do not create more memory. They make insufficient memory appear sufficient. Most of the time, this strategy works remarkably well.
 
