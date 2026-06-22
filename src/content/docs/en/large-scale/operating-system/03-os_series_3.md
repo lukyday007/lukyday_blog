@@ -47,7 +47,7 @@ For an overbooked hotel to survive, one condition must hold: when a guest walks 
 
 Operating systems face the same problem. They cannot reject a new program every time RAM is tight. The mechanism that resolves this constraint is **Virtual Memory.**
 
-Accept every request upfront, and give each program the **illusion** of a vast, private memory space. Do not hand over physical memory in advance. Instead, map real RAM only at the moment the program actually reads or writes data.
+Accept every request upfront, and give each program the **illusion** of a vast, private memory space. Do not hand over physical memory in advance. Instead, map real RAM only at the moment the program reads or writes data.
 
 ```
 [ Virtual Memory ]
@@ -55,11 +55,11 @@ Accept every request upfront, and give each program the **illusion** of a vast, 
 Process A     "My 4GB"
 Process B     "My 4GB"
 Process C     "My 4GB"
-          ↓
-    ┌───────────┐
+           ↓
+    ┌────────────┐
     │  Real RAM  │
     │    8GB     │
-    └───────────┘
+    └────────────┘
 
 → Every process believes it has 4GB. In reality, they share the same RAM.
 ```
@@ -95,16 +95,16 @@ The OS handles memory the same way. If a program requests 100MB but only touches
 ```
 [ Lazy Allocation ]
 
-  메모리 요청              실제 접근             물리 메모리 할당
-┌──────────┐          ┌──────────┐          ┌──────────┐
-│ Program  │          │ Program  │          │ RAM      │
-│ 100MB    │ ───────▶ │ Page A   │ ───────▶ │ Page A   │
-│ 요청      │          │ 접근      │          │ 할당      │
-└──────────┘          └──────────┘          └──────────┘
-      │                     │
-      ▼                     ▼
-  약속만 존재             Page Fault
-  (비용 지연)             (비용 청구)
+Memory Request           First Access           Physical Memory Allocation
+┌────────────┐          ┌────────────┐          ┌────────────┐
+│  Program   │          │  Program   │          │    RAM     │
+│  Request   │ ───────▶ │  Accesses  │ ───────▶ │   Page A   │
+│  100 MB    │          │  Page A    │          │  Allocated │
+└────────────┘          └────────────┘          └────────────┘
+       │                       │
+       ▼                       ▼
+Virtual Reservation       Page Fault
+ (Cost Deferred)          (Cost Paid)
 ```
 
 This is **Lazy Allocation.** Physical memory is not assigned when requested. It is assigned **when used.**
@@ -133,32 +133,42 @@ The OS avoids this inefficiency by deferring the cost once again.
 When a copy is requested, the OS **does not actually copy anything.** Instead, it points both the parent and child process to the same physical memory. On the surface, the duplication appears complete. Underneath, a single resource is shared — and the real cost is postponed.
 
 ```
-[ Copy-on-Write - fork() 직후 ]
+[ Copy-on-Write — Immediately After fork() ]
 
- 부모 프로세스                      자식 프로세스
-     │                               │
-     ▼                               ▼
-┌──────────┐                    ┌──────────┐
-│  Page A  │ ◀────────────────▶ │  Page A  │
-│  DATA    │    같은 물리 메모리    │  DATA    │
-└──────────┘                    └──────────┘
+ Parent Process                Child Process
+        │                            │
+        ▼                            ▼
+┌────────────────┐           ┌────────────────┐
+│ Virtual Page A │           │ Virtual Page A │
+└───────┬────────┘           └───────┬────────┘
+        └─────────────┬──────────────┘
+                      ▼
+              ┌────────────────┐
+              │ Physical Page A│
+              │      DATA      │
+              └────────────────┘
 
-→ 복사한 것처럼 보이지만, 실제로는 하나의 메모리를 공유한다.
+    One Physical Page Shared by Both Processes
 ```
 
 The deferred cost surfaces only when one of the two processes **modifies** the data. At that moment — and only at that moment — the OS copies the affected page and separates them. This is **Copy-on-Write (CoW).**
 
 ```
-[ Copy-on-Write - 자식 프로세스가 Page A 수정 ]
+[ Copy-on-Write — Child Modifies Page A ]
 
- 부모 프로세스                   자식 프로세스
-      │                            │
-      ▼                            ▼
-┌───────────┐                ┌───────────┐
-│  Page A   │                │  Page A'  │
-│   DATA    │                │  NEW DATA │
-└───────────┘                └───────────┘
-   원본 유지                     실제 복사 발생
+  Parent Process                Child Process
+        │                             │
+        ▼                             ▼
+┌────────────────┐            ┌────────────────┐
+│ Virtual Page A │            │ Virtual Page A │
+└───────┬────────┘            └───────┬────────┘
+        ▼                             ▼
+┌────────────────┐           ┌──────────────────┐
+│ Physical Page A│           │ Physical Page A' │
+│      DATA      │           │    NEW DATA      │
+└────────────────┘           └──────────────────┘
+
+ Original Remains             New Page Allocated
 ```
 
 Redis relies on this exact mechanism when generating RDB snapshots. Rather than copying the entire dataset upfront, it calls `fork()` and lets the child process share memory with the parent. **Only the pages modified by the main process are copied in real time.** This is why a multi-gigabyte snapshot does not cause an instantaneous resource spike.
