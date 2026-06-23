@@ -1,5 +1,5 @@
 ---
-title: "Operating Systems Part 3 — Virtual Memory and the Cost of Illusion"
+title: "OS Part 3 — Virtual Memory and the Cost of Illusion"
 description: "Operating systems did not solve memory scarcity. They delayed the moment when scarcity becomes visible. Virtual Memory is not a memory technique — it is a strategy for hiding constraints."
 sidebar:
   order: 15
