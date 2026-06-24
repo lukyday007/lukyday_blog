@@ -245,5 +245,3 @@ Programs behave as though they have plenty of memory. The system shares scarce r
 Constraints do not disappear. When every program demands its promised resources at once, the illusion the OS has sustained can no longer hold.
 
 **Virtual Memory is not a memory technique. It is a technique for hiding constraints.**
-
-Next: The operating system's illusion does not last forever. When it finally breaks, all the costs that were deferred return — in the form of **real system failures.** The next installment examines what happens to a system the moment the illusion shatters.
