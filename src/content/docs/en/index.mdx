@@ -20,14 +20,6 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 import greetingImg from '../../../assets/greeting.png';
 
-<div style="display: flex; justify-content: center; align-items: center; margin: 3rem 0;">
-  <Image 
-    src={greetingImg} 
-    alt="Greeting Image" 
-    width="600"
-    style="border-radius: 1rem; box-shadow: var(--sl-shadow-md); border: 1px solid var(--sl-color-hairline); height: auto;" 
-  />
-</div>
 
 ## 📚 Learning Tracks
 
@@ -44,6 +36,15 @@ import greetingImg from '../../../assets/greeting.png';
 - Handling Replication Lag
 
 ---
+
+<div style="display: flex; justify-content: center; align-items: center; margin: 3rem 0;">
+  <Image 
+    src={greetingImg} 
+    alt="Greeting Image" 
+    width="600"
+    style="border-radius: 1rem; box-shadow: var(--sl-shadow-md); border: 1px solid var(--sl-color-hairline); height: auto;" 
+  />
+</div>
 
 ## 🚀 Shortcuts
 
