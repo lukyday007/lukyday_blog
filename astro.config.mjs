@@ -51,6 +51,10 @@ export default defineConfig({
 					label: 'Large-Scale',
 					autogenerate: { directory: 'large-scale' },
 				},
+				{
+					label: 'Problem-Solving',
+					autogenerate: { directory: 'problem-solving' },
+				},
 			],
 		}),
 	],
