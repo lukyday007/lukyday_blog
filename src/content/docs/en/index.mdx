@@ -3,15 +3,7 @@ title: Dayul's Tech Blog
 description: From CS fundamentals to high-scale traffic handling strategies.
 keywords: [High-Scale, Concurrency, Redis, Kafka, Architecture]
 hero:
-  tagline: |
-    Management informs. Engineering decides.<br>
-    There are no perfect technical decisions, only trade-offs.<br><br>
-
-    <strong>📚 Track 1.</strong> CS Fundamentals<br>
-    Operating System (3) · Network (5) · Database (6)<br><br>
-
-    <strong>⚙️ Track 2.</strong> Engineering Trade-offs<br>
-    Distributed Lock vs Lua Script · Kafka Ordering · Replication Lag
+  tagline: "Management informs. Engineering decides.<br>Code is strategy. Architecture has a reason.<br>Engineering has no absolute answers, only optimal trade-offs."
   image:
     file: ../../../assets/owl.png
   actions:
@@ -24,54 +16,77 @@ hero:
       variant: minimal
 ---
 
+import { Card, CardGrid } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 import greetingImg from '../../../assets/greeting.png';
 
-<div style="display:flex;justify-content:center;align-items:center;margin:3rem 0;">
-  <Image
-    src={greetingImg}
-    alt="Greeting Image"
+<div style="display: flex; justify-content: center; align-items: center; margin: 3rem 0;">
+  <Image 
+    src={greetingImg} 
+    alt="Greeting Image" 
     width="600"
-    style="border-radius:1rem;box-shadow:var(--sl-shadow-md);border:1px solid var(--sl-color-hairline);height:auto;"
+    style="border-radius: 1rem; box-shadow: var(--sl-shadow-md); border: 1px solid var(--sl-color-hairline); height: auto;" 
   />
 </div>
 
-## 🚀 Explore
+## 📚 Learning Tracks
 
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem;">
+### 📘 Track 1. CS Fundamentals
 
-  <a href="/en/high-scale/index/" style="text-decoration:none;color:inherit;">
-    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
-      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">High-Scale Traffic</h3>
-      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
-        Concurrency, consistency and availability
+- Operating System Series (3)
+- Network Series (5)
+- Database Series (6)
+
+### ⚙️ Track 2. Engineering Trade-offs
+
+- Distributed Lock vs. Lua Script
+- Kafka Topic Ordering Strategy
+- Handling Replication Lag
+
+---
+
+## 🚀 Shortcuts
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+
+  {/* 1. High-Scale Traffic Handling */}
+  <a href="/en/high-scale/index/" style="text-decoration: none; color: inherit;">
+    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
+      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">High-Scale Traffic</h3>
+      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">
+        Covers <strong>High-Scale</strong> system design strategies considering concurrency, consistency, and availability.
       </p>
     </div>
   </a>
 
-  <a href="/en/cs-basics/index/" style="text-decoration:none;color:inherit;">
-    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
-      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">CS Fundamentals</h3>
-      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
-        Network · OS · Database
+  {/* 2. CS Basics */}
+  <a href="/en/cs-basics/index/" style="text-decoration: none; color: inherit;">
+    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
+      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">CS Fundamentals</h3>
+      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">
+        Summarizes <strong>fundamentals</strong> for engineers, including Network, OS, and Database.
       </p>
     </div>
   </a>
 
-  <a href="/" style="text-decoration:none;color:inherit;">
-    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
-      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">한국어</h3>
-      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
-        Read the Korean version
+  {/* 3. Korean Version */}
+  <a href="/" style="text-decoration: none; color: inherit;">
+    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
+      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">한국어</h3>
+      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">
+        Read the Korean version of the blog.
       </p>
     </div>
   </a>
 
-  <a href="https://github.com/lukyday007/minichat" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;">
-    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
-      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">Minichat Source Code</h3>
-      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
-        Real-time chat server implementation →
+  {/* 4. Chat Project */}
+  <a href="https://github.com/lukyday007/minichat" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: block; height: 100%;">
+    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; cursor: pointer;">
+      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">
+        View Minichat Source Code →
+      </h3>
+      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">
+        A real-time chat server designed for high-traffic environments using Java, Spring, Redis, and Kafka.
       </p>
     </div>
   </a>
