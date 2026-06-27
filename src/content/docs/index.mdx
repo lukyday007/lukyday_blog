@@ -2,9 +2,16 @@
 title: Dayul's Tech Blog
 description: CS 기초부터 대용량 트래픽 처리 전략까지 정리합니다.
 keywords: [High-Scale, Concurrency, Redis, Kafka, Architecture]
-# template: splash  <-- 이 줄을 지웠으므로 이제 왼쪽 사이드바가 보일 겁니다!
 hero:
-  tagline: "경영의 통찰. 엔지니어링의 선택.<br>코드는 전략이다. 모든 아키텍처 결정에는 이유가 있다. <br>기술 결정에는 정답이 없다. 최선의 선택이 있을 뿐이다."
+  tagline: |
+    경영의 통찰. 엔지니어링의 선택.<br>
+    기술 결정에 정답은 없다. 트레이드오프가 있을 뿐이다.<br><br>
+
+    <strong>📚 Track 1.</strong> CS Fundamentals — 경영학 렌즈로 다시 읽는 CS<br>
+    OS (3) · Network (5) · Database (6)<br><br>
+
+    <strong>⚙️ Track 2.</strong> 실전 기술 선택 — Minichat Trade-offs<br>
+    Distributed Lock vs Lua Script · Kafka Ordering · Replication Lag
   image:
     file: ../../assets/owl.png
   actions:
@@ -17,53 +24,55 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 import greetingImg from '../../assets/greeting.png';
 
-<div style="display: flex; justify-content: center; align-items: center; margin: 3rem 0;">
-  <Image 
-    src={greetingImg} 
-    alt="Greeting Image" 
+<div style="display:flex;justify-content:center;align-items:center;margin:3rem 0;">
+  <Image
+    src={greetingImg}
+    alt="Greeting Image"
     width="600"
-    style="border-radius: 1rem; box-shadow: var(--sl-shadow-md); border: 1px solid var(--sl-color-hairline); height: auto;" 
+    style="border-radius:1rem;box-shadow:var(--sl-shadow-md);border:1px solid var(--sl-color-hairline);height:auto;"
   />
 </div>
 
 ## 🚀 카테고리 바로가기
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem;">
 
-  {/* 1번 카드: 대용량 트래픽 처리 */}
-  <a href="/high-scale/index/" style="text-decoration: none; color: inherit;">
-    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
-      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">대용량 트래픽 처리</h3>
-      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">동시성, 정합성, 가용성을 고려한 **High-Scale** 시스템 설계 전략을 다룹니다.</p>
+  <a href="/high-scale/index/" style="text-decoration:none;color:inherit;">
+    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
+      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">대용량 트래픽 처리</h3>
+      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
+        동시성, 정합성, 가용성을 고려한 High-Scale 시스템 설계 전략
+      </p>
     </div>
   </a>
 
-  {/* 2번 카드: CS 기초 */}
-  <a href="/cs-basics/index/" style="text-decoration: none; color: inherit;">
-    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
-      {/* 여기에 CS 기초에 맞는 다른 이미지를 넣으셔도 됩니다. 일단 같은 걸로 넣어둘게요. */}
-      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">CS 기초</h3>
-      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">네트워크, 운영체제, DB 등 엔지니어로서 갖춰야 할 **기본기**를 정리합니다.</p>
+  <a href="/cs-basics/index/" style="text-decoration:none;color:inherit;">
+    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
+      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">CS 기초</h3>
+      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
+        Network · OS · Database 기본기
+      </p>
     </div>
   </a>
 
-  {/* 3번 카드: 다국어 지원 */}
-  <a href="/en/" style="text-decoration: none; color: inherit;">
-    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; transition: border-color 0.2s ease; cursor: pointer;" onmouseover="this.style.borderColor='var(--sl-color-text-accent)'" onmouseout="this.style.borderColor='var(--sl-color-hairline)'">
-      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">다국어 지원</h3>
-      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">한국어뿐만 아니라 **영어**로도 지식을 공유합니다.</p>
+  <a href="/en/" style="text-decoration:none;color:inherit;">
+    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
+      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">English</h3>
+      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
+        Read every article in English
+      </p>
     </div>
   </a>
 
-  {/* 4번 카드: 프로젝트 보러가기 */}
-  <a href="https://github.com/lukyday007/minichat" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: block; height: 100%;">
-    <div style="background-color: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 0.75rem; padding: 1.5rem; height: 100%; cursor: pointer;">
-      <h3 style="margin: 0 0 0.5rem 0; color: var(--sl-color-white);">채팅 서비스 프로젝트 코드 보러가기 &rarr;</h3>
-      <p style="margin: 0; font-size: 0.95rem; color: var(--sl-color-gray-3);">대용량 트래픽 상황을 가정한 실시간 채팅 서버입니다.</p>
+  <a href="https://github.com/lukyday007/minichat" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;">
+    <div style="background-color:var(--sl-color-bg-nav);border:1px solid var(--sl-color-hairline);border-radius:.75rem;padding:1.5rem;height:100%;">
+      <h3 style="margin:0 0 .5rem 0;color:var(--sl-color-white);">Minichat 프로젝트</h3>
+      <p style="margin:0;font-size:.95rem;color:var(--sl-color-gray-3);">
+        실시간 채팅 서버 구현 코드 보기 →
+      </p>
     </div>
   </a>
 
