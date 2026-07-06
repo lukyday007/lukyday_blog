@@ -1,6 +1,6 @@
 ---
 title: Why Was It Still Slow After Parallel Processing?
-description: "Parallelizing message delivery with parallelStream didn't resolve the bottleneck. This post traces the shift from per-user calls to per-server batching, and shows when parallelization finally started to matter."
+description: "Parallelizing message delivery with parallelStream didn't resolve the bottleneck. This post traces the shift from per-user calls to per-server bulk processing, and shows when parallelization finally started to matter."
 sidebar:
   order: 7
 date: 2026-07-06
@@ -8,7 +8,7 @@ date: 2026-07-06
 tags:
   - gRPC
   - Redis
-  - Batch
+  - Bulk
   - Optimization
   - Minichat
 ---
@@ -108,7 +108,7 @@ In Part 6, the core insight behind Target Routing was that the destination of a 
 
 ## Tradeoff — Execute Faster, or Reduce the Work
 
-| Criteria | Parallel Processing | Server-side Batching |
+| Criteria | Parallel Processing | Server-level Bulk Processing |
 |-|-|-|
 | What it optimizes | How can we execute faster? | Why are we executing so many calls? |
 | Optimization target | Execution time | Number of network calls |
@@ -116,18 +116,18 @@ In Part 6, the core insight behind Target Routing was that the destination of a 
 | gRPC | relay × N (parallel) | bulkRelay × K (server count) |
 | Implementation complexity | Low | Higher (proto changes, grouping logic) |
 
-Parallelization optimizes execution. Batching optimizes the workload itself.
+Parallelization optimizes execution. Bulk processing optimizes the workload itself.
 
 
-## Decision — Batch First, Then Parallelize
+## Decision — Bulk First, Then Parallelize
 
-Batching and parallelization are not mutually exclusive. The question is which comes first.
+Bulk processing and parallelization are not mutually exclusive. The question is which comes first.
 
 Parallelizing 200 calls still means making 200 calls. Reducing the call count to 3 (one per server) and then parallelizing means executing 3 calls concurrently. Same technique, different effect.
 
 I was trying to execute the wrong workload faster, instead of reducing the workload first.
 
-The conclusion was simple: batch first. Group recipients by destination server, send one bulk relay per server, and only then parallelize across servers if necessary.
+The conclusion was simple: bulk first. Group recipients by destination server, send one bulk relay per server, and only then parallelize across servers if necessary.
 
 
 ## Implementation
@@ -153,9 +153,9 @@ message RelayBulkMessageRequest {
 
 The existing single-recipient RPC remains unchanged. A bulk version that accepts multiple recipient IDs was added alongside it. The bulk RPC reuses the same `RelayMessageResponse`.
 
-### sendMessageToChatRoom — Server-level Batch Relay
+### sendMessageToChatRoom — Server-level Bulk Relay
 
-The per-user loop was replaced with a classify → batch → relay pipeline.
+The per-user loop was replaced with a classify → bulk → relay pipeline.
 
 ```java
 // Before
@@ -194,7 +194,7 @@ Benchmark setup:
 - Measured: the core network path of `sendMessageToChatRoom` (Redis lookup + gRPC relay)
 - Iterations: 100 (after 10 warmup rounds)
 
-### Scenario 1 — Per-User Calls vs Server-level Batching
+### Scenario 1 — Per-User Calls vs Server-level Bulk Relay
 
 200 remote users, all connected to the same server. Comparing individual calls against batched delivery.
 
@@ -206,7 +206,7 @@ Benchmark setup:
 | gRPC relay × 200 | 23.9ms | 41.1ms | 54.6ms |
 | **Total** | **36.4ms** | **55.7ms** | **70.4ms** |
 
-**Server-level batching (MGET + bulk relay)**
+**Server-level Bulk Relay (MGET + bulk relay)**
 
 | Metric | Avg | P95 | P99 |
 |-|-|-|-|
@@ -220,9 +220,9 @@ The number of recipients didn't change. Parallelizing the execution: 36ms. Reduc
 
 ### Scenario 2 — When Does Parallelization Start to Matter?
 
-In Scenario 1, adding a thread pool on top of batching made no difference. With only one remote server, there was only one gRPC call — nothing to parallelize.
+In Scenario 1, adding a thread pool on top of bulk processing made no difference. With only one remote server, there was only one gRPC call — nothing to parallelize.
 
-To test whether parallelization matters after batching, I increased the number of remote servers to 3 and varied both user count and thread pool size.
+To test whether parallelization matters after bulk processing, I increased the number of remote servers to 3 and varied both user count and thread pool size.
 
 **200 remote users, 3 servers**
 
@@ -270,9 +270,9 @@ Third, the benefit of parallelization grows with user count. At 200 users, seque
 | 4 | Redis failure | Per-feature damage profile differs | Separate fail strategies |
 | 5 | ID generation | Used as sort/comparison key | Snowflake |
 | 6 | WebSocket Scale-Out | Destination is already known | Target Routing over Broadcast |
-| 7 | Message relay optimization | Destination is a server, not a user | Server-level batching over per-user calls |
+| 7 | Message relay optimization | Destination is a server, not a user | Server-level bulk relay over per-user calls | 
 
-Parts 6 and 7 follow the same line of questioning. Part 6 decided *which server to send the message to*. Part 7 asked *why we were sending separate calls to the same server*. Identifying the destination and batching by destination are different stages of the same optimization.
+Parts 6 and 7 follow the same line of questioning. Part 6 decided *which server to send the message to*. Part 7 asked *why we were sending separate calls to the same server*. Identifying the destination and grouping by destination are different stages of the same optimization.
 
 
 ## Conclusion
