@@ -134,7 +134,7 @@ The conclusion was simple: bulk first. Group recipients by destination server, s
 
 ### Proto Change — Bulk Relay RPC
 
-The existing `relayMessage` RPC accepts a single recipient ID. To send per-server batches, a new RPC that accepts a list of recipients was needed.
+The existing `relayMessage` RPC accepts a single recipient ID. To send per-server bulk requests, a new RPC that accepts a list of recipients was needed.
 
 ```protobuf
 // Before
@@ -196,7 +196,7 @@ Benchmark setup:
 
 ### Scenario 1 — Per-User Calls vs Server-level Bulk Relay
 
-200 remote users, all connected to the same server. Comparing individual calls against batched delivery.
+200 remote users, all connected to the same server. Comparing individual calls against bulk delivery.
 
 **Per-user processing (parallelStream + individual calls)**
 
@@ -262,7 +262,7 @@ Third, the benefit of parallelization grows with user count. At 200 users, seque
 
 ## Same Pattern, Different Layer
 
-| Post | Problem | Data Characteristic | Decision |
+| Post | Problem | Characteristic | Decision |
 |-|-|-|-|
 | 1 | Race Condition | Monotonically increasing (max) | Lua Script over distributed lock |
 | 2 | Kafka ordering inversion | Per-topic ordering requirements differ | Partition key only for chat-message |
