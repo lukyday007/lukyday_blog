@@ -16,7 +16,7 @@ tags:
 <p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: July 06, 2026</p>
 
 
-## 배경 — 한 메시지, 수백 명의 수신자
+## 배경 — 하나의 메시지, 수백 명의 수신자
 
 6편에서 WebSocket 서버가 여러 대로 늘어나면서 Target Routing을 선택했다. Redis에 유저별 연결 서버 정보를 저장하고, 로컬 세션이 있으면 WebSocket으로 직접 전달, 없으면 gRPC로 해당 서버에 릴레이하는 구조다.
 
