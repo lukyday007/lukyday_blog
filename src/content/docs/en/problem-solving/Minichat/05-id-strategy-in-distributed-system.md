@@ -95,53 +95,38 @@ However, if clock drift causes the server clock to move backward, monotonic incr
 
 ## Implementation
 
+What mattered in the implementation was not the Snowflake algorithm itself, but ensuring that the premise established earlier — **IDs preserve time ordering** — holds at the implementation level as well.
+
 ```java
-public class Snowflake {
-    private static final int NODE_ID_BITS = 10;
-    private static final int SEQUENCE_BITS = 12;
-    private static final long DEFAULT_CUSTOM_EPOCH = 1735689600000L; // 2025-01-01 00:00:00 UTC
+public synchronized long nextId() {
+    long currentTimestamp = System.currentTimeMillis() - customEpoch;
 
-    private final long nodeId;
-    private final long customEpoch;
-    private volatile long lastTimestamp = -1L;
-    private volatile long sequence = 0L;
-
-    public synchronized long nextId() {
-        long currentTimestamp = System.currentTimeMillis() - customEpoch;
-
-        // Clock drift defense: wait until clock catches up
-        while (currentTimestamp < lastTimestamp) {
-            currentTimestamp = System.currentTimeMillis() - customEpoch;
-        }
-
-        if (currentTimestamp == lastTimestamp) {
-            sequence = sequence + 1;
-
-            // Sequence overflow defense: wait for next millisecond if 4096 exceeded
-            if (sequence > ((1L << SEQUENCE_BITS) - 1)) {
-                while (currentTimestamp <= lastTimestamp) {
-                    currentTimestamp = System.currentTimeMillis() - customEpoch;
-                }
-                sequence = 0;
-            }
-        } else {
-            sequence = 0;
-        }
-
-        lastTimestamp = currentTimestamp;
-
-        return currentTimestamp << (NODE_ID_BITS + SEQUENCE_BITS)
-                | (nodeId << SEQUENCE_BITS)
-                | sequence;
+    // A backwards clock breaks the monotonic increase premise, so refuse to generate
+    if (currentTimestamp < lastTimestamp) {
+        throw new RuntimeException("Clock moved backwards. Refusing to generate id.");
     }
+
+    if (currentTimestamp == lastTimestamp) {
+        sequence = (sequence + 1) & SEQUENCE_MASK;
+        if (sequence == 0) {
+            // If 4096 IDs are exhausted within the same millisecond, wait for the next one
+            currentTimestamp = tilNextMillis(lastTimestamp);
+        }
+    } else {
+        sequence = 0L;
+    }
+
+    lastTimestamp = currentTimestamp;
+
+    return currentTimestamp << (NODE_ID_BITS + SEQUENCE_BITS)
+            | (nodeId << SEQUENCE_BITS)
+            | sequence;
 }
 ```
 
-The custom epoch is set to 2025-01-01 to maximize the usable range of the 41-bit timestamp compared to a standard Unix epoch.
+Setting a custom epoch of 2025-01-01 gives the 41-bit timestamp a lifespan of roughly 69 years.
 
-Two defensive mechanisms are included. When clock drift is detected — meaning the current timestamp is earlier than the last recorded one — the generator waits until the clock catches up, preserving monotonic increase. When more than 4096 IDs are requested within a single millisecond, the generator waits for the next millisecond to prevent sequence overflow.
-
-This implementation uses a wait-based strategy for clock drift. In a production environment, NTP-based time synchronization would serve as the primary safeguard, with the wait-or-reject policy determined by service requirements.
+Clock drift was initially handled by waiting, but I switched to refusing generation, judging that failing fast is operationally sounder than an unbounded wait.
 
 
 ## Validation

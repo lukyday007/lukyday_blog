@@ -101,53 +101,38 @@ Snowflake ID의 구조:
 
 ## 구현
 
+구현에서 중요한 것은 Snowflake 알고리즘 자체보다, 앞에서 정리한 **'ID가 시간 순서를 유지한다'는 전제가 구현에서도 유지**되는 것이었다.
+
 ```java
-public class Snowflake {
-    private static final int NODE_ID_BITS = 10;
-    private static final int SEQUENCE_BITS = 12;
-    private static final long DEFAULT_CUSTOM_EPOCH = 1735689600000L; // 2025-01-01 00:00:00 UTC
+public synchronized long nextId() {
+    long currentTimestamp = System.currentTimeMillis() - customEpoch;
 
-    private final long nodeId;
-    private final long customEpoch;
-    private volatile long lastTimestamp = -1L;
-    private volatile long sequence = 0L;
-
-    public synchronized long nextId() {
-        long currentTimestamp = System.currentTimeMillis() - customEpoch;
-
-        // Clock Drift 방어: 시계가 뒤로 가면 따라잡을 때까지 대기
-        while (currentTimestamp < lastTimestamp) {
-            currentTimestamp = System.currentTimeMillis() - customEpoch;
-        }
-
-        if (currentTimestamp == lastTimestamp) {
-            sequence = sequence + 1;
-
-            // Sequence 오버플로우 방어 (밀리초당 4096개 초과 시)
-            if (sequence > ((1L << SEQUENCE_BITS) - 1)) {
-                while (currentTimestamp <= lastTimestamp) {
-                    currentTimestamp = System.currentTimeMillis() - customEpoch;
-                }
-                sequence = 0;
-            }
-        } else {
-            sequence = 0;
-        }
-
-        lastTimestamp = currentTimestamp;
-
-        return currentTimestamp << (NODE_ID_BITS + SEQUENCE_BITS)
-                | (nodeId << SEQUENCE_BITS)
-                | sequence;
+    // 시계가 뒤로 가면 단조 증가 전제가 깨지므로, 생성 거부
+    if (currentTimestamp < lastTimestamp) {
+        throw new RuntimeException("Clock moved backwards. Refusing to generate id.");
     }
+
+    if (currentTimestamp == lastTimestamp) {
+        sequence = (sequence + 1) & SEQUENCE_MASK;
+        if (sequence == 0) {
+            // 같은 밀리초에서 4096개 소진 시 다음 밀리초까지 대기
+            currentTimestamp = tilNextMillis(lastTimestamp);
+        }
+    } else {
+        sequence = 0L;
+    }
+
+    lastTimestamp = currentTimestamp;
+
+    return currentTimestamp << (NODE_ID_BITS + SEQUENCE_BITS)
+            | (nodeId << SEQUENCE_BITS)
+            | sequence;
 }
 ```
 
-커스텀 Epoch을 2025-01-01로 설정하여 Unix timestamp 기준보다 더 많은 시간을 확보했다.
+커스텀 Epoch을 2025-01-01로 설정하여 41비트 타임스탬프로 약 69년의 수명을 확보했다.
 
-두 가지 방어 로직이 포함되어 있다. Clock drift 발생 시 이전 timestamp보다 작은 시간이 들어오면 시계가 따라잡을 때까지 대기하여 ID의 단조 증가를 유지한다. 같은 밀리초에 4096개 이상의 ID 생성 요청이 발생하면 다음 밀리초까지 대기하여 sequence overflow를 방지한다.
-
-이 구현에서는 대기 방식으로 clock drift를 처리한다. 실제 운영 환경에서는 NTP 기반 시간 동기화를 기본으로 하고, drift 발생 시 대기할지 예외 처리할지 서비스 요구사항에 따라 정책을 따로 결정해야 한다.
+Clock drift는 초반엔 대기 방식으로 처리했지만, 상한 없는 대기보다 빠르게 실패하는 편이 운영상 더 적합하다고 판단해 생성 거부 방식으로 변경했다.
 
 
 ## 검증
