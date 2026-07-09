@@ -12,9 +12,6 @@ date: 2026-04-25
 >
 > The fault did not lie within HTTP/2 itself but in the layer beneath it. TCP, a protocol designed in 1981, still controlled the data flow. While multiplexing allowed more data to move at the application layer, TCP continued to enforce strict ordering. This meant a single lost packet could stall the entire connection until it was recovered.
 
-*Reference: [TCP Head-of-Line Blocking — http3-explained](https://http3-explained.haxx.se/en/why-quic/why-tcphol)*  
-
-<br>
 <br>
 
 Keep-Alive reduced the cost of establishing connections by allowing one connection to handle many requests. However, the delivery queue remained single-file. Improving the application protocol only revealed a deeper bottleneck in the transport layer. That bottleneck was TCP.
@@ -24,6 +21,9 @@ Keep-Alive reduced the cost of establishing connections by allowing one connecti
 HTTP/1.1 followed a rigid rule where **one connection could only handle one request at a time** in a strict sequence.
 
 Keep-Alive eliminated the need to renegotiate a new contract for every exchange. But the delivery itself was still sequential. One large image delayed at the front of the queue, and every lightweight text file behind it had to wait. The connection was alive — it just couldn't move two things at once. This is **Head-of-Line Blocking (HOLB)**.
+
+*Reference: [TCP Head-of-Line Blocking — http3-explained](https://http3-explained.haxx.se/en/why-quic/why-tcphol)*  
+
 
 Browsers tried to route around it by opening up to six parallel connections per server. But that just brought back the port exhaustion and handshake overhead from Network Part 2. The core issue wasn't resolved. **The cost was simply transferred into a different form of inefficiency.**
 
