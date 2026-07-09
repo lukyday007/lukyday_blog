@@ -22,11 +22,12 @@ date: 2026-03-18
 
 ### 서버가 비명을 지르기 전 신호들
 
-시스템은 갑자기 쓰러지지 않는다. 반드시 전조가 있다. Google SRE팀은 이를 **4가지 황금 신호(Four Golden Signals)**로 정의한다.
+시스템은 갑자기 터지지지지 않는다. 반드시 전조가 있다. Google SRE팀은 이를 </strong>4가지 황금 신호(Four Golden Signals)</strong>로 정의한다.
 
-<div style="text-align: right; margin-top: -0.5rem;">  
-    <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE: Monitoring Distributed Systems</a>
-</div>
+*Reference: [Google SRE: Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/)*
+
+<br>
+
 
 * **지연 시간 (Latency):** 요청을 처리하는 데 걸리는 시간. 성공/실패 여부에 따른 속도 차이를 추적하여 시스템 이상 징후를 파악한다.
 * **트래픽 (Traffic):** 시스템에 가해지는 수요의 양. 초당 HTTP 요청 수(RPS) 등으로 측정한다.
@@ -42,18 +43,18 @@ date: 2026-03-18
 
 황금 신호가 시스템의 **상태**를 알려준다면, 엔지니어는 부하의 **성격**을 파악해야 한다. 같은 "대용량"이라도 무엇이 많은지에 따라 전략이 완전히 달라진다.
 
-**트래픽 (Traffic: 요청이 많을 때)**
+- **트래픽 (Traffic: 요청이 많을 때)**
 단위 시간당 얼마나 많은 요청이 들어오는가, 그리고 얼마나 많은 연결을 유지할 수 있는가를 측정한다.
-* **TPS / QPS:** 초당 처리되는 트랜잭션 또는 쿼리 수. 시스템의 실질적인 생산성을 나타낸다.
-* **Concurrency:** 동일 시점에 유지되는 연결(Connection) 수. 티켓팅이나 이벤트 상황에서 시스템의 수용량을 결정짓는 핵심 요소다.
+  * **TPS / QPS:** 초당 처리되는 트랜잭션 또는 쿼리 수. 시스템의 실질적인 생산성을 나타낸다.
+  * **Concurrency:** 동일 시점에 유지되는 연결(Connection) 수. 티켓팅이나 이벤트 상황에서 시스템의 수용량을 결정짓는 핵심 요소다.
 
-**데이터 양 (Volume: 데이터가 많을 때)**
+- **데이터 양 (Volume: 데이터가 많을 때)**
 시스템이 처리해야 할 데이터의 물리적 크기와 전송 능력을 의미한다.
-* **Throughput:** 단위 시간당 전송되는 데이터 크기(MB/s). 대용량 파일 전송이나 미디어 스트리밍 환경에서 시스템의 병목을 결정짓는다.
+  * **Throughput:** 단위 시간당 전송되는 데이터 크기(MB/s). 대용량 파일 전송이나 미디어 스트리밍 환경에서 시스템의 병목을 결정짓는다.
 
-**복잡도 (Complexity: 처리가 복잡할 때)**
+- **복잡도 (Complexity: 처리가 복잡할 때)**
 요청 하나를 처리하기 위해 필요한 연산량과 시스템 간 상호작용의 수준이다.
-* **Logic Latency:** 로직이 복잡해질수록 응답 시간이 길어지며, 이는 곧 포화도(Saturation)의 급격한 상승으로 이어진다.
+  * **Logic Latency:** 로직이 복잡해질수록 응답 시간이 길어지며, 이는 곧 포화도(Saturation)의 급격한 상승으로 이어진다.
 
 실제 장애는 이 셋이 동시에 터진다. 하지만 원인을 분리하지 못하면 해결책도 없다.
 
@@ -68,9 +69,9 @@ date: 2026-03-18
 
 엘리야후 골드랫(Eliyahu M. Goldratt)이 제시한 경영 관리 패러다임이다. "시스템의 전체 산출물은 가장 취약한 사슬, 즉 <strong>제약 요인(Constraint)</strong>에 의해 결정된다"는 것이 핵심이다.
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://www.lean.org/lexicon-terms/theory-of-constraints/">Lean Enterprise Institute: TOC</a>
-</div>
+*Reference: [Lean Enterprise Institute: TOC](https://www.lean.org/lexicon-terms/theory-of-constraints/)*
+
+
 <br>
 
 서버도 똑같다. <strong>포화도(Saturation)가 100%에 
@@ -107,14 +108,15 @@ date: 2026-03-18
 ```
 Scale-up은 복잡도를 포기하는 대신 속도를 산다.
 Scale-out은 단순함을 포기하는 대신 한계를 없앤다.
+
 정답은 없다. 지금 병목이 어디인지가 선택을 결정한다.
+
 
 <br>
 
 ### 앞으로
 
 결국 대용량 처리는 **포화도(Saturation)를 관리하여 지연 시간(Latency)과 오류(Errors)를 제어하는 전략적 병목 관리**다.
-
 
 *Reference: [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)*
 
