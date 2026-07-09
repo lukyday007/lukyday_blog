@@ -9,20 +9,20 @@ date: 2026-03-18
 
 > 2025년 10월 새벽 3시, AWS 서버 하나의 DNS 설정 오류로 Snapchat, Roblox, McDonald's 앱이 동시에 먹통이 되었다. 전 세계 60개국, 3,500개 기업이 이 작은 균열 하나로 동시에 멈췄다. 
 > 
-> 시스템은 우리가 상상하는 것보다 훨씬 취약하다. 대용량 처리는 단순히 서버 성능을 높이는 기술적 유행이 아니다. 자원 임계점이라는 벼랑 끝에서 서비스의 생존을 지켜내기 위한 엔지니어링의 본질이다.
+> 시스템은 우리가 상상하는 것보다 훨씬 취약하다. 대용량 처리는 단순히 서버 성능을 높이는 기술적 유행이 아니다. 자원 임계점에서 서비스의 생존을 지켜내기 위한 엔지니어링의 본질이다.
 
 <br>
 <br>
 
 그렇다면 "대용량"은 어디서부터인가? 사용자 1만 명? 100만 명? 사실 이 질문 자체가 잘못되었다. 대용량은 절대적인 숫자가 아니다. **시스템이 가진 자원의 임계점을 넘어서는 순간**, 그것이 대용량이다. 카카오의 일상 트래픽이 스타트업에게는 재앙이 되는 이유가 여기에 있다.
 
-이 시리즈는 그 임계점을 어떻게 감지하고, 왜 무너지며, 어떻게 버텨내는지를 다룬다.
+이 시리즈는 그 임계점을 어떻게 감지하고, 왜 터지며, 어떻게 버텨내는지를 다룬다.
 
 <br>
 
 ### 서버가 비명을 지르기 전 신호들
 
-무너지는 시스템은 갑자기 쓰러지지 않는다. 반드시 전조가 있다. Google SRE팀은 이를 **4가지 황금 신호(Four Golden Signals)**로 정의한다.
+시스템은 갑자기 쓰러지지 않는다. 반드시 전조가 있다. Google SRE팀은 이를 **4가지 황금 신호(Four Golden Signals)**로 정의한다.
 
 <div style="text-align: right; margin-top: -0.5rem;">  
     <a href="https://sre.google/sre-book/monitoring-distributed-systems/">Google SRE: Monitoring Distributed Systems</a>
@@ -86,9 +86,9 @@ date: 2026-03-18
 
 병목을 찾았다면 이제 수용량을 늘려야 한다. 선택지는 두 가지다.
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://www.geeksforgeeks.org/overview-of-scaling-vertical-and-horizontal-scaling/">GeeksforGeeks: Vertical and Horizontal Scaling</a>
-</div>
+*Reference: [GeeksforGeeks: Vertical and Horizontal Scaling](https://www.geeksforgeeks.org/overview-of-scaling-vertical-and-horizontal-scaling/)*
+
+<br>
 
 * **수직적 확장 (Scale-up):** 단일 노드의 CPU, RAM 등 사양을 높여 해당 지점의 포화도를 낮춘다. 빠르지만 한계가 있고, 비싸다.
 * **수평적 확장 (Scale-out):** 노드의 개수를 늘려 부하를 분산하고 전체 시스템의 처리량(Throughput)을 늘린다. 복잡하지만 이론상 무한히 확장 가능하다.
@@ -115,9 +115,9 @@ Scale-out은 단순함을 포기하는 대신 한계를 없앤다.
 
 결국 대용량 처리는 **포화도(Saturation)를 관리하여 지연 시간(Latency)과 오류(Errors)를 제어하는 전략적 병목 관리**다.
 
-<div style="text-align: right; margin-top: -0.5rem;">
-  <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html">AWS Well-Architected Framework</a>
-</div>
+
+*Reference: [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)*
+
 
 <br>
 
