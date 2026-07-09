@@ -14,7 +14,7 @@ date: 2026-04-13
 
 <br>
 
-**Every transaction carries a setup cost.** Verifying the counterparty. Aligning on terms. Confirming mutual readiness. The more a transaction relies on trust, the higher that setup cost becomes.
+Every transaction carries **a setup cost.** Verifying the counterparty. Aligning on terms. Confirming mutual readiness. The more a transaction relies on trust, the higher that setup cost becomes.
 
 **Network protocols follow the same economic logic.** Before data can move reliably, both sides must establish a shared understanding: that packets will arrive, that order will be preserved, and that nothing will vanish without a response. None of this is free. It takes time—and that time compounds much faster than most expect.
 
@@ -43,6 +43,7 @@ Client                            Server
 ```
 
 Three signals must pass before data can flow. SYN and SYN-ACK represent the negotiation. ACK is the final signature. The actual transaction only starts once all three steps are complete.
+
 
 <br>
 
@@ -83,17 +84,20 @@ Port 5028  [TIME_WAIT ——————————— 2 min ——————
 
 ## Transaction Cost Theory and Keep-Alive Optimization
 
-In 1937, Ronald Coase famously asked why markets aren't frictionless. His answer was simple: every transaction demands a hidden tax—the cost of searching for partners, negotiating terms, and signing contracts. TCP is essentially a network implementation of that reality. Every connection demands a "negotiation fee," and **Transaction Cost Theory** points to exactly one solution.
+In 1937, Ronald Coase famously asked why markets aren't frictionless. 
+
+His answer was simple: every transaction demands a hidden tax—the cost of searching for partners, negotiating terms, and signing contracts. 
 
 *Reference: [UBS Nobel Perspectives: Oliver Williamson — Transaction Cost Theory](https://www.ubs.com/microsites/nobel-perspectives/en/laureates/oliver-williamson.html)*
 
+TCP is essentially a network implementation of that reality. Every connection demands a "negotiation fee," and **Transaction Cost Theory** points to exactly one solution.
+
 **The most effective way to reduce transaction costs is to reduce the frequency of transactions.**
 
-The goal isn't necessarily faster contracts, but fewer of them. This is the core logic behind **HTTP Keep-Alive**. Instead of opening and closing a connection for every single request, Keep-Alive maintains a persistent connection across multiple requests. The setup cost is distributed—amortized over an entire session rather than paid upfront for every request.
+The goal isn't necessarily faster contracts, but **fewer** of them. This is the core logic behind **HTTP Keep-Alive**. Instead of opening and closing a connection for every single request, Keep-Alive maintains a persistent connection across multiple requests. The setup cost is distributed—amortized over an entire session rather than paid upfront for every request.
 
 Keep-Alive addressed the contract problem, but it wasn't a total cure. Even within a persistent connection, a rigid rule remained: requests had to be processed in the exact order they arrived. We fixed the negotiation fee, but suddenly the queue itself became the bottleneck.
 
-That's where the next part picks up.
 
 <br>
 
