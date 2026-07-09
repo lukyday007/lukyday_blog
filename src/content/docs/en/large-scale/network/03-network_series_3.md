@@ -43,14 +43,12 @@ The decision to build HTTP on top of TCP meant **every new improvement had to li
 
 **The ceiling was not the design of HTTP/2. The limitation was the foundation itself.**
 
-A choice made in 1981 was quietly setting the upper bound for the future. Thirty-four years later, that legacy was still dictating the hard borders of what innovation could reach.
-
 *Reference: [web.dev: HTTP/2](https://web.dev/articles/performance-http2)*
 
 
 <br>
 
-## HTTP/3 — Cutting the Path
+## HTTP/3 — Transmission Without TCP
 
 Google finally made the call to ditch TCP entirely.
 
@@ -59,15 +57,22 @@ There is a common misconception that dropping TCP means losing reliability. In r
 Google built **QUIC** directly on top of this bare foundation. QUIC handles everything TCP once did—retransmission, encryption, and connection management—but it does so **per stream**. If one stream stalls, the others keep moving. The root cause of Head-of-Line Blocking is finally eliminated.
 
 ```
-┌─────────────────┐        ┌─────────────────┐
-│      Before     │        │      After      │
-├─────────────────┤        ├─────────────────┤
-│   HTTP/1.1·2    │        │     HTTP/3      │
-│        ↕        │    →   │        ↕        │
-│       TCP       │        │      QUIC       │
-│        ↕        │        │        ↕        │
-│       IP        │        │       UDP       │
-└─────────────────┘        └─────────────────┘
+    HTTP/2 (TCP)               HTTP/3 (QUIC)
+┌────────────────────┐     ┌────────────────────┐
+│ Stream A           │     │ Stream A           │
+│ Stream B           │     │ Stream B           │
+│ Stream C           │     │ Stream C           │
+└─────────┬──────────┘     └──┬──────┬──────┬───┘
+          │                   │      │      │
+          ▼                   ▼      ▼      ▼
+     ┌──────────┐      Independent Stream Scheduler
+     │   TCP    │                  (QUIC)
+     └────┬─────┘                    │
+          ▼                          ▼
+         IP                         UDP
+
+TCP : One Lost Packet → Entire Connection Waits
+QUIC: One Lost Packet → Only That Stream Waits
 ```
 
 This is why HTTP/3 is described as "UDP-based." QUIC sits on top of UDP, and HTTP/3 runs on top of QUIC. **TCP was not simply abandoned. Its entire role was strategically replaced.**
@@ -99,13 +104,6 @@ QUIC solves this by integrating TLS 1.3 directly into its transport layer. Conne
 
 The trade-off is clear. By abandoning TCP, the application layer assumes full responsibility for packet loss handling, reliability, and security. While this makes the protocol simpler to deploy, the underlying architecture becomes far more complex.
 
-There is a difference between improving a system and replacing one. 
-
-HTTP/2 chose the first path: wider lanes on the same road.
-HTTP/3 chose the second: a new road altogether.
-
-The first path is safer. The second is the only one capable of moving the ceiling.
-
 *Reference: [Chromium: QUIC](https://www.chromium.org/quic/)*  <br>
 *Reference: [RFC 9000: QUIC](https://www.rfc-editor.org/rfc/rfc9000)*
 
@@ -113,26 +111,35 @@ The first path is safer. The second is the only one capable of moving the ceilin
 <br>
 
 ## How the Three Versions Compare
+
 ```
-HTTP/1.1  — Requests must wait in line
-time  →   t1      t2      t3      t4      t5
-R1        [====]  [====]
-R2                        [====]  [====]
-R3                                        [====]
+[ HTTP/1.1  — Requests must wait in line ]
+
+time  →   t1     t2     t3     t4     t5
+R1        [====] [====]
+R2                      [====] [====]
+R3                                    [====]
+
 R2 can't start until R1 finishes. R3 can't start until R2 finishes.
-──────────────────────────────────────────
-HTTP/2  — One lost packet freezes everything
+---
+
+[ HTTP/2  — One lost packet freezes everything ]
+
 time  →   t1      t2      t3      t4      t5
 R1        [====]  [====]  [====]
 R2        [====]  ✕  ← packet lost
 R3        [====]  ← waiting...  ← waiting...
+
 When ✕ occurs, R1, R2, and R3 all freeze.
-──────────────────────────────────────────
-HTTP/3  — Only the affected stream pauses
+
+---
+
+[ HTTP/3  — Only the affected stream pauses ]
 time  →   t1      t2      t3      t4      t5
 R1        [====]  [====]  [====]  [====]
 R2        [====]  ✕ ← packet lost        [retransmit]
 R3        [====]  [====]  [====]  [====] ← keeps moving
+
 When ✕ occurs, only R2 pauses. R1 and R3 continue.
 ```
 
