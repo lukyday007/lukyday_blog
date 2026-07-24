@@ -48,13 +48,17 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: 'Large-Scale',
-					autogenerate: { directory: 'large-scale' },
+					label: 'Trior-and-Error',
+					autogenerate: { directory: 'trior-and-error' },
 				},
 				{
 					label: 'Problem-Solving',
 					autogenerate: { directory: 'problem-solving' },
 				},
+				{
+					label: 'Large-Scale',
+					autogenerate: { directory: 'large-scale' },
+				},		
 			],
 		}),
 	],
