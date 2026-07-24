@@ -13,6 +13,7 @@ tags:
   - Minichat
 ---
 
+<p style="font-size: 0.85rem; color: var(--sl-color-gray-3); text-align: right;">Published: July 24, 2026</p>
 
 ## 의심한 지점
 
