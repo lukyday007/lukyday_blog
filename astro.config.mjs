@@ -48,8 +48,8 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: 'Trior-and-Error',
-					autogenerate: { directory: 'trior-and-error' },
+					label: 'Validation-Experiments',
+					autogenerate: { directory: 'validation-experiments' },
 				},
 				{
 					label: 'Problem-Solving',
