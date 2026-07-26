@@ -171,20 +171,16 @@ gRPC 호출 횟수만 세면 부분적인 그림만 나온다. 서버의 실제 
 4. 그것도 넘치면           → 호출자가 직접 처리
 ```
 
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/single_50_requests_per_second.png"
-    alt="single_t50_threadpool"
-    width="48%"
-  />
-</div>
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/bulk_50_requests_per_second.png"
-    alt="bulk_t50_threadpool"
-    width="48%"
-  />
-</div>
+<img
+src="/images/validation-experiments/grpc-single-bulk-relay/single_50_requests_per_second.png"
+alt="single_t50_threadpool"
+width="48%"
+/>
+<img
+src="/images/validation-experiments/grpc-single-bulk-relay/bulk_50_requests_per_second.png"
+alt="bulk_t50_threadpool"
+width="48%"
+/>
 
 *방 인원 150명 · 초당 50건 조건. 위쪽이 단건, 아래쪽이 벌크다. 두 그래프의 Y축 범위는 동일하게 고정했다.*
 
@@ -226,20 +222,17 @@ gRPC 호출 횟수만 세면 부분적인 그림만 나온다. 서버의 실제 
 
 벌크는 애초에 Task 수가 적어 스레드를 늘릴 필요가 없었다. 30개의 스레드만으로도 충분히 처리 가능했지만, 병렬 처리 횟수 자체는 단건보다 낮았기 때문에 이 조건에서는 p50이 다소 높게 나타났다.
 
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/single_talkers_90_per_room.png"
-    alt="single_u90_threadpool"
-    width="48%"
-  />
-</div>
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/bulk_talkers_90_per_room.png"
-    alt="bulk_u90_threadpool"
-    width="48%"
-  />
-</div>
+<img
+src="/images/validation-experiments/grpc-single-bulk-relay/single_talkers_90_per_room.png"
+alt="single_u90_threadpool"
+width="48%"
+/>
+<img
+src="/images/validation-experiments/grpc-single-bulk-relay/bulk_talkers_90_per_room.png"
+alt="bulk_u90_threadpool"
+width="48%"
+/>
+
 
 *방 인원 90명 조건. 위쪽 단건은 스레드가 200개까지 확장됐고, 아래쪽 벌크는 30개를 유지했다.*
 
@@ -288,13 +281,13 @@ Micrometer의 히스토그램 계산은 부하가 일정 수준을 넘으면 예
 
 `executor_queued_tasks`(작업 대기 큐 크기)는 해석에 주의가 필요했다. 예를 들어 단건 방식에서는 방 인원 150명 조건의 최고값이 179였지만, 오히려 부하가 더 낮은 조건에서 398이 관측됐다.
 
-<div style="margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/single_queued_398.png"
-    alt="single_t10_queued_spike"
-    width="70%"
-  />
-</div>
+
+<img
+src="/images/validation-experiments/grpc-single-bulk-relay/single_queued_398.png"
+alt="single_t10_queued_spike"
+width="70%"
+/>
+
 
 *398이 관측된 시각은 테스트 시작 직후다. 이후 구간에서는 0에 가깝게 유지된다.*
 
