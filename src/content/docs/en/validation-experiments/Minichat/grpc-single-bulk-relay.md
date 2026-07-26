@@ -220,8 +220,8 @@ Single relay created many Tasks, and the thread pool expanded to its maximum siz
 Bulk relay created few Tasks to begin with, so it didn't need to add threads. It handled the load with just 30 threads, but since the number of parallel operations was lower than single relay, its p50 came out somewhat higher under this condition.
 
 
-<img src="/images/validation-experiments/grpc-single-bulk-relay/single_talkers_90_per_room.png" alt="single_u90_threadpool" width="48%"/>
-<img src="/images/validation-experiments/grpc-single-bulk-relay/bulk_talkers_90_per_room.png" alt="bulk_u90_threadpool" width="48%"/>
+<img src="/images/validation-experiments/grpc-single-bulk-relay/single_talkers_90_per_room.png" alt="single_u90_threadpool" width="100%"/>
+<img src="/images/validation-experiments/grpc-single-bulk-relay/bulk_talkers_90_per_room.png" alt="bulk_u90_threadpool" width="100%"/>
 
 
 *Room of 90 people. On top, single relay expanded to 200 threads; on the bottom, bulk relay stayed at 30.*
