@@ -174,12 +174,12 @@ gRPC 호출 횟수만 세면 부분적인 그림만 나온다. 서버의 실제 
 <img
 src="/images/validation-experiments/grpc-single-bulk-relay/single_50_requests_per_second.png"
 alt="single_t50_threadpool"
-width="48%"
+width="100%"
 />
 <img
 src="/images/validation-experiments/grpc-single-bulk-relay/bulk_50_requests_per_second.png"
 alt="bulk_t50_threadpool"
-width="48%"
+width="100%"
 />
 
 *방 인원 150명 · 초당 50건 조건. 위쪽이 단건, 아래쪽이 벌크다. 두 그래프의 Y축 범위는 동일하게 고정했다.*
@@ -225,12 +225,12 @@ width="48%"
 <img
 src="/images/validation-experiments/grpc-single-bulk-relay/single_talkers_90_per_room.png"
 alt="single_u90_threadpool"
-width="48%"
+width="100%"
 />
 <img
 src="/images/validation-experiments/grpc-single-bulk-relay/bulk_talkers_90_per_room.png"
 alt="bulk_u90_threadpool"
-width="48%"
+width="100%"
 />
 
 
@@ -285,7 +285,7 @@ Micrometer의 히스토그램 계산은 부하가 일정 수준을 넘으면 예
 <img
 src="/images/validation-experiments/grpc-single-bulk-relay/single_queued_398.png"
 alt="single_t10_queued_spike"
-width="70%"
+width="100%"
 />
 
 

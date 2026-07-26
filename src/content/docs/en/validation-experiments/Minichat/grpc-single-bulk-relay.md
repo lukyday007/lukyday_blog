@@ -170,20 +170,9 @@ To find the cause, I looked To check whether this difference actually shows up i
 4. If that overflows too → the caller runs it directly
 ```
 
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/single_50_requests_per_second.png"
-    alt="single_t50_threadpool"
-    width="48%"
-  />
-</div>
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/bulk_50_requests_per_second.png"
-    alt="bulk_t50_threadpool"
-    width="48%"
-  />
-</div>
+<img src="/images/validation-experiments/grpc-single-bulk-relay/single_50_requests_per_second.png" alt="single_t50_threadpool" width="100%"/>
+<img src="/images/validation-experiments/grpc-single-bulk-relay/bulk_50_requests_per_second.png" alt="bulk_t50_threadpool" width="100%"/>
+
 
 *Room of 150 people, 50 messages/s. Single relay on top, bulk relay on the bottom. The Y-axis range is fixed to be identical across both graphs.*
 
@@ -230,20 +219,10 @@ Single relay created many Tasks, and the thread pool expanded to its maximum siz
 
 Bulk relay created few Tasks to begin with, so it didn't need to add threads. It handled the load with just 30 threads, but since the number of parallel operations was lower than single relay, its p50 came out somewhat higher under this condition.
 
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/single_talkers_90_per_room.png"
-    alt="single_u90_threadpool"
-    width="48%"
-  />
-</div>
-<div style="display:flex; gap:16px; margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/bulk_talkers_90_per_room.png"
-    alt="bulk_u90_threadpool"
-    width="48%"
-  />
-</div>
+
+<img src="/images/validation-experiments/grpc-single-bulk-relay/single_talkers_90_per_room.png" alt="single_u90_threadpool" width="48%"/>
+<img src="/images/validation-experiments/grpc-single-bulk-relay/bulk_talkers_90_per_room.png" alt="bulk_u90_threadpool" width="48%"/>
+
 
 *Room of 90 people. On top, single relay expanded to 200 threads; on the bottom, bulk relay stayed at 30.*
 
@@ -292,13 +271,7 @@ After removing these factors, I re-measured every condition.
 
 The `executor_queued_tasks` (queued task count) value needed care when interpreting. For example, in single relay the peak under the 150-person condition was 179, but a lower-load condition showed 398.
 
-<div style="margin:24px 0;">
-  <img
-    src="/images/validation-experiments/grpc-single-bulk-relay/single_queued_398.png"
-    alt="single_t10_queued_spike"
-    width="70%"
-  />
-</div>
+<img src="/images/validation-experiments/grpc-single-bulk-relay/single_queued_398.png" alt="single_t10_queued_spike" width="100%"/>
 
 *The 398 was observed right after the test started. It stays near 0 for the rest of the run.*
 
