@@ -47,8 +47,8 @@
 | [풀 크기를 늘렸다면 해결됐을까?](https://lukyday-blog.vercel.app/validation-experiments/minichat/connection-pool-contention/) | [Would a Larger Connection Pool Have Solved It?](https://lukyday-blog.vercel.app/en/validation-experiments/minichat/connection-pool-contention/) |
 | [gRPC 단건 릴레이는 정말 느렸을까?](https://lukyday-blog.vercel.app/validation-experiments/minichat/grpc-single-bulk-relay/) | [Was Single gRPC Relay Really That Slow?](https://lukyday-blog.vercel.app/en/validation-experiments/minichat/grpc-single-bulk-relay/) |
 
+
 <br>
----
 
 ## 🛠️ Local Development / 로컬 개발 환경
 
