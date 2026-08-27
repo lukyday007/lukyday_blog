@@ -272,7 +272,7 @@ Then — once we've confirmed Redis is down, couldn't we just avoid calling Redi
 
 ## Applying a Lightweight Circuit Breaker
 
-For this, I implemented a simple circuit breaker directly, without any external library, that blocks Redis calls for a set period.
+For this, I implemented a simple circuit breaker directly, without any external library — it just stores a **block-until time in an `AtomicLong`**, that blocks Redis calls for a set period.
 
 So when a Redis call fails, I changed it to **block further Redis calls for a while and fall straight through to the fallback**.
 
@@ -302,8 +302,6 @@ Request 4 → no Redis call → fallback
 after 5s
 Request N → retry Redis
 ```
-
-The implementation uses no external library — it just stores a **block-until time in an `AtomicLong`**, a lightweight circuit breaker built by hand.
 
 If the block-until time hasn't passed, it skips Redis and goes straight to the fallback; once the time passes, it retries Redis.
 
