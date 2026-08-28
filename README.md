@@ -46,7 +46,7 @@
 | :--- | :--- |
 | [풀 크기를 늘렸다면 해결됐을까?](https://lukyday-blog.vercel.app/validation-experiments/minichat/connection-pool-contention/) | [Would a Larger Connection Pool Have Solved It?](https://lukyday-blog.vercel.app/en/validation-experiments/minichat/connection-pool-contention/) |
 | [gRPC 단건 릴레이는 정말 느렸을까?](https://lukyday-blog.vercel.app/validation-experiments/minichat/grpc-single-bulk-relay/) | [Was Single gRPC Relay Really That Slow?](https://lukyday-blog.vercel.app/en/validation-experiments/minichat/grpc-single-bulk-relay/) |
-
+| [Redis에 장애가 발생해도 메시지를 지킬 수 있을까?](https://lukyday-blog.vercel.app/validation-experiments/minichat/redis-outage-message-reliability/) | [Can We Keep Messages Alive When Redis Goes Down?](https://lukyday-blog.vercel.app/en/validation-experiments/minichat/redis-outage-message-reliability/) |
 
 <br>
 
