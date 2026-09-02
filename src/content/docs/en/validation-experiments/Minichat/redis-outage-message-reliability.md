@@ -218,14 +218,14 @@ The difference that ultimately remained was 150.
 I fixed two things.
 
 - Reduced the Redis response wait (command timeout) from **60s → 2s**. Now when Redis dies, a timeout exception fires after 2 seconds.
-- On a failed Redis lookup, made it **fetch the information from somewhere else**. Added fallbacks so the user's chatId comes from the session cache, and room member info comes from the DB.
+- On a failed Redis lookup, made it **fetch the information from somewhere else**. Added fallbacks so the user's chatId and room member info come from the DB.
 
 ```
 Redis fails
    ↓
 timeout after 2s
    ↓
-look up from session cache / DB
+look up from DB
    ↓
 message processing continues
 ```
